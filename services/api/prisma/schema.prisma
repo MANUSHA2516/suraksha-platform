@@ -1,0 +1,514 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "client"
+  binaryTargets = ["debian-openssl-3.0.x"]
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum Role {
+  USER
+  POLICE
+  COUNSELOR
+  LEGAL_ADVISOR
+  ADMIN
+}
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+enum CaseStage {
+  FILED
+  UNDER_INVESTIGATION
+  SUSPECT_CONTACTED
+  RESOLVED
+}
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+enum Category {
+  CYBER_HARASSMENT
+  DOMESTIC_VIOLENCE
+  WORKPLACE_HARASSMENT
+  PUBLIC_TRANSPORT_ABUSE
+}
+enum QueryStatus {
+  NEW
+  IN_PROGRESS
+  ANSWERED
+}
+enum PublicationStatus {
+  PENDING
+  PUBLISHED
+  REMOVED
+}
+enum SosStatus {
+  ACTIVE
+  RESPONDING
+  SAFE
+  CANCELLED
+}
+model User {
+  id String @id @default(uuid())
+  role Role @default(USER)
+  login String @unique
+  name String
+  phoneCipher String?
+  nicCipher String?
+  passwordHash String
+  pinHash String?
+  pinAttempts Int @default(0)
+  pinLockedUntil DateTime?
+  verified Boolean @default(false)
+  status AccountStatus @default(ACTIVE)
+  locale String @default("en")
+  disguise String @default("calculator")
+  notificationsEnabled Boolean @default(true)
+  locationDefault Boolean @default(false)
+  biometricEnabled Boolean @default(false)
+  demo Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  staff StaffProfile?
+  sessions RefreshSession[]
+  contacts TrustedContact[]
+  cases Case[] @relation("Owner")
+  assignedCases Case[] @relation("Officer")
+  evidence Evidence[]
+  sos SOSAlert[] @relation("SosOwner")
+  responses SOSAlert[] @relation("Responder")
+  shares LocationShare[]
+  locations LocationEvent[]
+  analyses AIAnalysis[]
+  queries LegalQuery[] @relation("Questioner")
+  assignedQueries LegalQuery[] @relation("Advisor")
+  checkIns WellbeingCheckIn[]
+  slots CounselorSlot[]
+  appointments CounselingAppointment[] @relation("Client")
+  counseling CounselingAppointment[] @relation("Counselor")
+  posts CommunityPost[]
+  comments CommunityComment[]
+  likes CommunityLike[]
+  notifications Notification[]
+  consents Consent[]
+  deletions DeletionJob[]
+  @@index([role, status, verified])
+}
+model StaffProfile {
+  id String @id @default(uuid())
+  userId String @unique
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  credentialId String @unique
+  jurisdiction String @default("Colombo")
+  specialization String?
+  languages String[] @default(["en"])
+  verifiedAt DateTime?
+  verifiedBy String?
+}
+model RefreshSession {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  family String
+  tokenHash String @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([userId, family])
+}
+model Consent {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  scope String
+  version String
+  grantedAt DateTime @default(now())
+  revokedAt DateTime?
+}
+model Case {
+  id String @id @default(uuid())
+  number Int @unique @default(autoincrement())
+  reference String @unique
+  ownerId String
+  owner User @relation("Owner", fields:[ownerId], references:[id])
+  officerId String?
+  officer User? @relation("Officer", fields:[officerId], references:[id])
+  category Category
+  stage CaseStage @default(FILED)
+  triage String @default("NEW")
+  priority Priority @default(MEDIUM)
+  anonymous Boolean @default(false)
+  escalated Boolean @default(false)
+  version Int @default(1)
+  requestKey String
+  demo Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  report Report?
+  evidence CaseEvidence[]
+  events CaseEvent[]
+  messages CaseMessage[]
+  analyses AIAnalysis[]
+  @@unique([ownerId, requestKey])
+  @@index([officerId, stage])
+  @@index([ownerId, createdAt])
+}
+model Report {
+  id String @id @default(uuid())
+  caseId String @unique
+  case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+  occurredAt DateTime
+  narrativeCipher String
+}
+model CaseEvidence {
+  caseId String
+  case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+  evidenceId String
+  evidence Evidence @relation(fields:[evidenceId], references:[id], onDelete:Restrict)
+  attachedAt DateTime @default(now())
+  @@id([caseId,evidenceId])
+}
+model CaseEvent {
+  id String @id @default(uuid())
+  caseId String
+  case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+  actorId String?
+  type String
+  publicText String
+  privateCipher String?
+  createdAt DateTime @default(now())
+  @@index([caseId, createdAt])
+}
+model CaseMessage {
+  id String @id @default(uuid())
+  caseId String
+  case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+  senderId String
+  bodyCipher String
+  createdAt DateTime @default(now())
+}
+model Evidence {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields:[ownerId], references:[id])
+  objectKey String @unique
+  filename String
+  mediaType String
+  kind String
+  size Int
+  sha256 String
+  keyId String @default("local-v1")
+  noteCipher String?
+  locationTag String?
+  capturedAt DateTime @default(now())
+  sealedAt DateTime?
+  createdAt DateTime @default(now())
+  cases CaseEvidence[]
+  access EvidenceAccess[]
+  analyses AIAnalysis[]
+  @@index([ownerId,createdAt])
+}
+model EvidenceAccess {
+  id String @id @default(uuid())
+  evidenceId String
+  evidence Evidence @relation(fields:[evidenceId], references:[id], onDelete:Cascade)
+  actorId String
+  action String
+  createdAt DateTime @default(now())
+}
+model TrustedContact {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields:[ownerId], references:[id], onDelete:Cascade)
+  name String
+  relationship String
+  phoneCipher String
+  priority Boolean @default(false)
+  createdAt DateTime @default(now())
+  shares LocationShare[]
+}
+model SOSAlert {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation("SosOwner",fields:[ownerId], references:[id])
+  responderId String?
+  responder User? @relation("Responder",fields:[responderId], references:[id])
+  jurisdiction String @default("Colombo")
+  status SosStatus @default(ACTIVE)
+  requestKey String
+  locationState String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events SOSEvent[]
+  locations LocationEvent[]
+  deliveries NotificationDelivery[]
+  @@unique([ownerId,requestKey])
+  @@index([jurisdiction,status])
+}
+model SOSEvent {
+  id String @id @default(uuid())
+  sosId String
+  sos SOSAlert @relation(fields:[sosId],references:[id],onDelete:Cascade)
+  type String
+  actorId String?
+  createdAt DateTime @default(now())
+}
+model LocationShare {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
+  contactId String
+  contact TrustedContact @relation(fields:[contactId],references:[id],onDelete:Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+}
+model LocationEvent {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
+  sosId String?
+  sos SOSAlert? @relation(fields:[sosId],references:[id],onDelete:Cascade)
+  latitude Float
+  longitude Float
+  accuracy Float
+  capturedAt DateTime
+  @@index([ownerId,capturedAt])
+}
+model DangerZone {
+  id String @id @default(uuid())
+  label String
+  latitude Float
+  longitude Float
+  radiusMeters Float
+  reportCount Int @default(1)
+  demo Boolean @default(true)
+  updatedAt DateTime @updatedAt
+}
+model AIAnalysis {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
+  caseId String?
+  case Case? @relation(fields:[caseId],references:[id],onDelete:SetNull)
+  evidenceId String
+  evidence Evidence @relation(fields:[evidenceId],references:[id])
+  language String
+  classification String
+  riskLevel String
+  confidence Float?
+  modelVersion String
+  validationStatus String @default("NON_VALIDATED_DEVELOPMENT")
+  explanation String
+  createdAt DateTime @default(now())
+}
+model ModelVersion {
+  id String @id
+  name String
+  provider String
+  deployedAt DateTime?
+  driftStatus String @default("NOT_EVALUATED")
+  demo Boolean @default(true)
+  metrics ModelMetric[]
+  events ModelAuditEvent[]
+}
+model ModelMetric {
+  id String @id @default(uuid())
+  modelId String
+  model ModelVersion @relation(fields:[modelId],references:[id])
+  language String
+  metric String
+  value Float
+  datasetVersion String
+  runId String
+  evaluatedAt DateTime
+  demo Boolean @default(false)
+}
+model ModelAuditEvent {
+  id String @id @default(uuid())
+  modelId String
+  model ModelVersion @relation(fields:[modelId],references:[id])
+  actorId String
+  type String
+  detail String
+  createdAt DateTime @default(now())
+}
+model LegalQuery {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation("Questioner",fields:[ownerId],references:[id])
+  advisorId String?
+  advisor User? @relation("Advisor",fields:[advisorId],references:[id])
+  title String
+  status QueryStatus @default(NEW)
+  escalated Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages LegalMessage[]
+  @@index([advisorId,status])
+}
+model LegalMessage {
+  id String @id @default(uuid())
+  queryId String
+  query LegalQuery @relation(fields:[queryId],references:[id],onDelete:Cascade)
+  senderRole String
+  bodyCipher String
+  createdAt DateTime @default(now())
+}
+model LegalResource {
+  id String @id @default(uuid())
+  title String
+  body String
+  language String @default("en")
+  sourceUrl String?
+  reviewedAt DateTime?
+  authorId String
+  published Boolean @default(false)
+  readMinutes Int @default(5)
+  views Int @default(0)
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model WellbeingCheckIn {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
+  answerCipher String
+  instrument String @default("DOCUMENTED_SINGLE_PROMPT")
+  shared Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+model CounselorSlot {
+  id String @id @default(uuid())
+  counselorId String
+  counselor User @relation(fields:[counselorId],references:[id])
+  startsAt DateTime
+  durationMinutes Int @default(45)
+  appointments CounselingAppointment[]
+  @@unique([counselorId,startsAt])
+}
+model CounselingAppointment {
+  id String @id @default(uuid())
+  clientId String
+  client User @relation("Client",fields:[clientId],references:[id])
+  counselorId String
+  counselor User @relation("Counselor",fields:[counselorId],references:[id])
+  slotId String @unique
+  slot CounselorSlot @relation(fields:[slotId],references:[id])
+  clientAlias String
+  modality String @default("CHAT")
+  status String @default("BOOKED")
+  concern String @default("Check-in")
+  createdAt DateTime @default(now())
+  notes CounselingNote[]
+  messages CounselingMessage[]
+  @@index([counselorId,status])
+}
+model CounselingNote {
+  id String @id @default(uuid())
+  appointmentId String
+  appointment CounselingAppointment @relation(fields:[appointmentId],references:[id],onDelete:Cascade)
+  summaryCipher String
+  cadence String
+  cadenceNoteCipher String?
+  risk String
+  createdAt DateTime @default(now())
+}
+model CounselingMessage {
+  id String @id @default(uuid())
+  appointmentId String
+  appointment CounselingAppointment @relation(fields:[appointmentId],references:[id],onDelete:Cascade)
+  senderRole String
+  bodyCipher String
+  createdAt DateTime @default(now())
+}
+model CommunityPost {
+  id String @id @default(uuid())
+  authorId String
+  author User @relation(fields:[authorId],references:[id])
+  body String
+  status PublicationStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  comments CommunityComment[]
+  likes CommunityLike[]
+  moderation ModerationItem[]
+}
+model CommunityComment {
+  id String @id @default(uuid())
+  postId String
+  post CommunityPost @relation(fields:[postId],references:[id],onDelete:Cascade)
+  authorId String
+  author User @relation(fields:[authorId],references:[id])
+  body String
+  status PublicationStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  moderation ModerationItem[]
+}
+model CommunityLike {
+  postId String
+  post CommunityPost @relation(fields:[postId],references:[id],onDelete:Cascade)
+  userId String
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  @@id([postId,userId])
+}
+model ModerationItem {
+  id String @id @default(uuid())
+  postId String?
+  post CommunityPost? @relation(fields:[postId],references:[id],onDelete:Cascade)
+  commentId String?
+  comment CommunityComment? @relation(fields:[commentId],references:[id],onDelete:Cascade)
+  source String
+  reason String
+  status String @default("PENDING")
+  decidedBy String?
+  decidedAt DateTime?
+  createdAt DateTime @default(now())
+}
+model Notification {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  type String
+  message String
+  resourceId String?
+  readAt DateTime?
+  createdAt DateTime @default(now())
+}
+model NotificationDelivery {
+  id String @id @default(uuid())
+  sosId String
+  sos SOSAlert @relation(fields:[sosId],references:[id],onDelete:Cascade)
+  recipientLabel String
+  mode String @default("development")
+  status String @default("DEVELOPMENT_RECORDED")
+  createdAt DateTime @default(now())
+}
+model AuditLog {
+  id String @id @default(uuid())
+  actorId String?
+  action String
+  resourceId String?
+  createdAt DateTime @default(now())
+  @@index([actorId,createdAt])
+}
+model OutboxEvent {
+  id String @id @default(uuid())
+  type String
+  resourceId String
+  audienceId String
+  createdAt DateTime @default(now())
+  @@index([audienceId,createdAt])
+}
+model DeletionJob {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields:[userId],references:[id])
+  status String @default("REQUESTED")
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+}

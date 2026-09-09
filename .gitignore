@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.next/
+.expo/
+.env
+.env.local
+*.tsbuildinfo
+coverage/
+test-results/
+playwright-report/
+.venv/
+__pycache__/
+*.pyc
+.local/
+apps/mobile/android/
+apps/mobile/ios/

@@ -1,0 +1,157 @@
+[
+  {
+    "paragraph": 14,
+    "target": "media/image1.png",
+    "preceding_text": "Primary Actor: New User (first-time visitor)"
+  },
+  {
+    "paragraph": 41,
+    "target": "media/image2.png",
+    "preceding_text": "Primary Actor: Returning User / New User"
+  },
+  {
+    "paragraph": 80,
+    "target": "media/image3.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 116,
+    "target": "media/image4.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 151,
+    "target": "media/image5.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 187,
+    "target": "media/image6.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 223,
+    "target": "media/image7.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 258,
+    "target": "media/image8.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 296,
+    "target": "media/image9.png",
+    "preceding_text": "Primary Actor: New User"
+  },
+  {
+    "paragraph": 330,
+    "target": "media/image10.png",
+    "preceding_text": "Primary Actor: Returning User (post-onboarding)"
+  },
+  {
+    "paragraph": 363,
+    "target": "media/image11.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 392,
+    "target": "media/image12.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 422,
+    "target": "media/image13.png",
+    "preceding_text": "Primary Actor: Registered User (in distress)"
+  },
+  {
+    "paragraph": 459,
+    "target": "media/image14.png",
+    "preceding_text": "Primary Actor: Registered User (post-SOS trigger)"
+  },
+  {
+    "paragraph": 494,
+    "target": "media/image15.png",
+    "preceding_text": "Primary Actor: New or Registered User"
+  },
+  {
+    "paragraph": 526,
+    "target": "media/image16.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 564,
+    "target": "media/image17.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 591,
+    "target": "media/image18.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 623,
+    "target": "media/image19.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 657,
+    "target": "media/image20.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 695,
+    "target": "media/image21.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 741,
+    "target": "media/image22.png",
+    "preceding_text": "One-tap handoff into the Legal Aid chatbot"
+  },
+  {
+    "paragraph": 747,
+    "target": "media/image23.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 778,
+    "target": "media/image24.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 816,
+    "target": "media/image25.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 852,
+    "target": "media/image26.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 864,
+    "target": "media/image27.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 893,
+    "target": "media/image28.png",
+    "preceding_text": "(Corresponds to Figure 20 in the Chapter 5 results section of the research proposal)"
+  },
+  {
+    "paragraph": 931,
+    "target": "media/image29.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 969,
+    "target": "media/image30.png",
+    "preceding_text": "Primary Actor: Registered User"
+  },
+  {
+    "paragraph": 1005,
+    "target": "media/image31.png",
+    "preceding_text": "Primary Actor: Registered User"
+  }
+]

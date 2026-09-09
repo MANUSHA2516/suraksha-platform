@@ -1,0 +1,5 @@
+# Research pipeline boundary
+
+No datasets, weights or held-out evaluations were supplied. The runnable development analyzer detects a few English strings to exercise transport, provenance and encrypted vault storage. It does not label unmatched input safe or return a confidence/accuracy figure. Script detection is not reliable language identification for romanized/code-mixed text.
+
+Required research work: obtain licensed SOLD/Tamil/English corpora and consented samples; version and deduplicate data; independently annotate non-offensive/offensive/threat/blackmail categories with adjudication and kappa; split without user/source leakage; fit a TF-IDF classical baseline; evaluate held-out per-language precision/recall/F1/confusion matrices; compare a fine-tuned multilingual transformer; store dataset, preprocessing and artifact hashes. Populate ModelMetric only from actual runs. ArtifactAnalyzer intentionally refuses unconfigured trained-model deployment. Screenshot OCR is a separate unconfigured provider, not image abuse classification.

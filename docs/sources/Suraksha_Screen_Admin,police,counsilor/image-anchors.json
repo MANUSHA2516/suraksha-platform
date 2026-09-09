@@ -1,0 +1,82 @@
+[
+  {
+    "paragraph": 8,
+    "target": "media/image1.png",
+    "preceding_text": "1.1  Admin Sign-In (Guardian Access Portal)"
+  },
+  {
+    "paragraph": 20,
+    "target": "media/image2.png",
+    "preceding_text": "1.2  Admin Dashboard — Overview"
+  },
+  {
+    "paragraph": 32,
+    "target": "media/image3.png",
+    "preceding_text": "1.3  User Management"
+  },
+  {
+    "paragraph": 43,
+    "target": "media/image4.png",
+    "preceding_text": "1.4  Reports Queue"
+  },
+  {
+    "paragraph": 53,
+    "target": "media/image5.png",
+    "preceding_text": "1.5  Case Detail & Escalation Screen (#SL-2291)"
+  },
+  {
+    "paragraph": 66,
+    "target": "media/image6.png",
+    "preceding_text": "1.6  Content Moderation"
+  },
+  {
+    "paragraph": 77,
+    "target": "media/image7.png",
+    "preceding_text": "1.7  AI Model Monitoring (under Settings)"
+  },
+  {
+    "paragraph": 90,
+    "target": "media/image8.png",
+    "preceding_text": "2.1  Officer Sign-In"
+  },
+  {
+    "paragraph": 101,
+    "target": "media/image9.png",
+    "preceding_text": "2.2  Active Alerts — Live SOS Map"
+  },
+  {
+    "paragraph": 112,
+    "target": "media/image10.png",
+    "preceding_text": "2.3  Case Investigation File (#SL-2291)"
+  },
+  {
+    "paragraph": 124,
+    "target": "media/image11.png",
+    "preceding_text": "2.4  Update Case Status"
+  },
+  {
+    "paragraph": 136,
+    "target": "media/image12.png",
+    "preceding_text": "3.1  Counselor Sign-In"
+  },
+  {
+    "paragraph": 147,
+    "target": "media/image13.png",
+    "preceding_text": "3.2  Today's Sessions Dashboard"
+  },
+  {
+    "paragraph": 159,
+    "target": "media/image14.png",
+    "preceding_text": "3.3  Client Snapshot (#4482)"
+  },
+  {
+    "paragraph": 171,
+    "target": "media/image15.png",
+    "preceding_text": "3.4  Session Notes & Follow-Up"
+  },
+  {
+    "paragraph": 185,
+    "target": "media/image16.png",
+    "preceding_text": "4.1  Legal Queries Dashboard"
+  }
+]

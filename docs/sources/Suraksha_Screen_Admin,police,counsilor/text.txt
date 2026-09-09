@@ -1,0 +1,204 @@
+Suraksha
+UI Screen Catalog
+Admin · Police · Counselor · Legal Advisor Consoles
+16 implemented screens across four staff-facing roles, each shown with its purpose, key components, and role in the overall case-management workflow.
+1. Admin — Platform Operations Console
+The Admin role has full oversight across every case and every other role. It is the only interface with system-wide visibility and is responsible for triage, escalation, user/account verification, community-content moderation, and quality control of the AI models running in production.
+1.1  Admin Sign-In (Guardian Access Portal)
+
+Function
+Restricted staff login screen for authorized response and field staff of the Suraksha safety network. Presented as a split panel: a branded trust panel on the left ("Protecting staff & communities, together") and the credential form on the right.
+Key components
+Staff ID field (e.g. SL-ADM-0192) and Password field
+"Remember this device" checkbox and "Forgot access code?" link
+Primary Sign In button
+Alternate authentication: "Sign in with Police ID SSO"
+Trust indicators: 256-bit end-to-end encryption, SL Police verified, ISO 27001
+Purpose in the system
+Acts as the first access-control checkpoint — only verified government/platform staff can reach the admin console. The visible encryption and verification badges are a deliberate trust-signalling design choice, addressing the stigma and trust barriers to reporting identified in the study's background research by making security claims concrete at the very first point of contact, rather than burying them in policy documents.
+1.2  Admin Dashboard — Overview
+
+Function
+The administrator's landing page, giving a single-glance summary of platform-wide health and activity.
+Key components
+Key metrics: Total active users (18,402), Open reports (37), SOS events today (4), Staff/AI accuracy (94%)
+Weekly Activity trend chart (SOS and report volume over the week)
+Live Feed — a real-time stream of platform events (SOS triggered, check-in confirmed, escort request closed, staff verified, report flagged)
+Recent Incidents table — case ID, type, location, assigned officer, status, and elapsed time
+Left navigation: Dashboard, Reports, Users, Settings
+Purpose in the system
+Gives the administrator an immediate, platform-wide read on system health without needing to open any individual module — the entry point for daily operations.
+1.3  User Management
+
+Function
+Central registry listing every account on the platform, with tools to verify, filter, and moderate accounts.
+Key components
+Counters: Total users (18,402), Verified (17,190), Pending review (148), Suspended (12)
+Filter tabs: All users / Women (Verified) / Police / Counselors / Pending
+Table columns: user name/ID, role detail, verification status, account status, view/edit actions
+"Add User" action for manually provisioning staff accounts
+Purpose in the system
+Supports the administrator's responsibility for verifying professional accounts — Police and Counselor registrations require credential checks before they can access their respective consoles — and for moderating flagged or suspended accounts (e.g. a police account flagged for review).
+1.4  Reports Queue
+
+Function
+The administrator's central triage tool, listing every incoming complaint filed by users through the app.
+Key components
+Counters: Open reports (37), High priority (9), Escalated (5), Resolved today (21)
+Filter tabs: All reports / New / In review / Escalated / Unassigned / Resolved
+Table columns: report reference & category (Cyber harassment, Domestic, Workplace, Stalking, Public harassment), colour-coded priority, status, assigned handler, time filed
+Purpose in the system
+Lets the administrator quickly identify which open reports need the most urgent attention via colour-coded priority tags, then drill into any case for full detail.
+1.5  Case Detail & Escalation Screen (#SL-2291)
+
+Function
+Opened from the Reports Queue, this is the full case package for a single report, giving the administrator everything needed to triage and route it.
+Key components
+AI Risk Assessment banner explaining why the model flagged the case High risk (e.g. blacklisted language detected, anonymous filer, multiple evidence items attached) with a recommended action ('assign to Police within 1 hour')
+Evidence bundle — attached files (e.g. chat_thread_export.pdf, screenshot_message_02.jpg) with automatic hash verification
+Report narrative — the filer's free-text description of the incident
+Case activity / audit trail — chronological log of automated and manual actions
+Case details panel: status, priority, category, filer (anonymous/named), filed date
+Actions: Assign to Police, Request more info, add an internal note, Mark as resolved, Escalate immediately
+Purpose in the system
+This is the same case (#SL-2291) later shown from the Police officer's perspective, illustrating how a single incident flows across roles under one shared case-reference scheme — the core integration mechanism that differentiates Suraksha from single-purpose tools such as 2six4, Cyber Care, or Fio.
+1.6  Content Moderation
+
+Function
+Queues community posts and comments that have been auto-flagged by the AI model or reported by users, for administrator review.
+Key components
+Counters: Pending review (23), Auto-flagged (14), Reported by users (9), Removed today (31)
+Filter tabs: All flagged / Posts / Comments / Auto-flagged / User-reported
+Each item shows the flag reason (e.g. a post sharing a phone number in violation of contact-sharing guidelines, a comment reported for harassment language)
+Per-item actions: Approve or Remove
+Purpose in the system
+Keeps the peer-support Community space on the user side safe and constructive, balancing automated AI flagging against community-driven reporting, and giving the administrator visibility into moderation workload.
+1.7  AI Model Monitoring (under Settings)
+
+Function
+Gives the administrator oversight of every AI model running in production — the transparency and accountability layer behind the platform's automated detection features.
+Key components
+Top metrics: Harassment model accuracy (94.2%), False-positive rate (3.1%), Models in production (6), Regional performance score (91%)
+Model Performance table — Harassment detection, Contact-info detection, Spam/phishing detection, Crisis-language detection — each with accuracy %, drift status (Stable/Drifting), and last retrained date
+Sinhala / Tamil Coverage panel — per-language accuracy (English highest, Sinhala and Tamil trailing)
+Recent Audit Activity feed — moderator overrides, automatic escalations, and retraining events (e.g. 'retrain triggered — new Tamil dataset added')
+Purpose in the system
+Provides transparent, accountable oversight of the harassment-detection pipeline that also powers the user-side 'Scan a Message' feature. The visible Sinhala/Tamil coverage gap is an honest acknowledgement of the low-resource-language limitation discussed elsewhere in the thesis, rather than a claim of parity with English.
+2. Police — Operational Response Console
+The Police console gives on-duty officers a real-time operational view of SOS alerts and assigned cases within their jurisdiction. It is optimised for rapid triage and status reporting rather than the broader platform-management functions available to Administrators.
+2.1  Officer Sign-In
+
+Function
+Restricted login for verified police units, presented as a split panel: a branded trust panel ("Respond faster. Protect more.") on the left and the credential form on the right.
+Key components
+Badge ID field (e.g. WP-CDU-0044) and Password field
+"Remember this device" checkbox and "Forgot access code?" link
+Alternate authentication: "Sign in with National Police ID"
+Trust indicators: verified police-unit access only, real-time SOS dispatch alerts, secure chain-of-custody evidence access, end-to-end encryption, GPS-enabled
+Purpose in the system
+Ensures only verified officers can reach live SOS data and case evidence, mirroring the same trust-signalling design used on the Admin and Counselor sign-in screens.
+2.2  Active Alerts — Live SOS Map
+
+Function
+The officer's landing screen — a real-time operational view of active emergencies in their jurisdiction.
+Key components
+Counters: Active SOS (3), Assigned to me (5), Avg response time (4.2 min), Resolved today (12)
+Live SOS Map with markers for active incidents (e.g. 'SOS – Nugegoda', 'Escort Unit 12')
+Alert Queue — cards per alert showing type, location, and elapsed time, each with a one-tap Respond button; lower-priority items get a View case button
+Left navigation: Live, Cases, Map, Profile
+Purpose in the system
+Moves an officer from awareness to action within seconds of an alert being raised. This is the direct counterpart to the user-side SOS trigger — an emergency raised by a survivor appears here almost immediately.
+2.3  Case Investigation File (#SL-2291)
+
+Function
+Opened from the Cases list, this presents the full investigation record for a case assigned to the officer.
+Key components
+Evidence bundle — sealed, hash-verified evidence carried over from the user's original report (e.g. chat_thread_export.pdf, screenshot_message_02.jpg)
+Location trail — reconstructed from the user's last known GPS points ('Last known location – Nugegoda Junction', 'En route – High Level Road', 'Starting point – Home address on file')
+Timeline — chronological case activity (evidence sealed for chain of custody → case opened by officer → evidence hash-verified → report routed to unit)
+Case metadata panel: status (Investigating), priority (High), category, assigned officer, filed/opened timestamps
+Actions: Update case status, Request additional evidence, Escalate to CID
+Purpose in the system
+This is the same Case #SL-2291 shown earlier in the Admin's Case Detail & Escalation screen, demonstrating that a single incident is tracked consistently as it moves from the Admin triage stage into active Police investigation.
+2.4  Update Case Status
+
+Function
+A simple, auditable stepper for progressing an investigation through its lifecycle.
+Key components
+Stage stepper: Filed (complete) → Under investigation (current) → Suspect contacted → Resolved
+Investigation notes — free-text field recorded against the case file, visible to CID if the case is later escalated
+Cancel and Save update actions
+Purpose in the system
+Structuring status changes through a fixed stepper keeps the case history in the Admin, Police, and User views consistently synchronised, rather than allowing free-text status updates that could drift out of sync across roles.
+3. Counselor — Clinical & Pastoral Care Console
+The Counselor console supports the clinical and pastoral-care side of the platform, allowing licensed counselors to manage their caseload, review client wellbeing history, and record session outcomes in a structured, auditable way — while keeping client identity anonymised.
+3.1  Counselor Sign-In
+
+Function
+Restricted login for verified counselors, presented as a split panel: a branded trust panel ("Listen closely. Help fully.") on the left and the credential form on the right.
+Key components
+Practitioner ID field (e.g. CNS-0071) and Password field
+"Remember this device" checkbox and "Forgot access code?" link
+Alternate authentication: "Sign in with Health Ministry ID"
+Trust indicators: verified counselor access only, confidential case notes fully encrypted, direct escalation to police & support teams
+Purpose in the system
+Restricts access to licensed, verified counselors only, and foregrounds the confidentiality guarantees that are essential for a clinical caseload of survivors.
+3.2  Today's Sessions Dashboard
+
+Function
+The counselor's home screen, summarising the day's workload.
+Key components
+Counters: Sessions today, Active clients (38), Unread messages (6), Completed this week (22)
+Today's Sessions list — client ID, time, modality tag (Video/Chat), presenting-concern tag (e.g. 'Urgent', 'Follow-up', 'Crisis follow-up'), and a one-tap Join or View action
+Weekly progress bar (e.g. '33 of 50 sessions — 70%')
+Recent Messages panel with unread indicators
+Left navigation: Sessions, Clients, Messages, Profile
+Purpose in the system
+Keeps the day's caseload, unread communication, and progress toward weekly targets all visible at once, without the counselor needing to navigate away.
+3.3  Client Snapshot (#4482)
+
+Function
+Opened from the sessions list, this is an anonymised client-session detail view combining wellbeing history and clinical notes.
+Key components
+Client snapshot — most recent screening score (e.g. 8/27), risk level (Mid-severity), number of prior sessions completed
+Session history — past sessions with duration and modality (e.g. 'Second check-in – coping strategies, Video, 45 min')
+Care notes — free-text clinical observations and recommended cadence
+Side panel: Client ID, risk level, first/next session dates, assigned counselor
+Actions: Start session, View full history, Escalate to crisis team
+Purpose in the system
+Keeps enough clinical detail available for time-sensitive care decisions while the client's identity remains anonymised (shown only as 'Client #4482'), consistent with the platform's confidentiality requirements for a survivor population.
+3.4  Session Notes & Follow-Up
+
+Function
+A structured clinical note-taking form completed after a session concludes.
+Key components
+Session summary (free text)
+Follow-up cadence selector: One-time / Weekly / Biweekly / Monthly, plus a cadence detail note (e.g. 'Weekly check-ins for 4 weeks')
+Updated risk-assessment selector: Low / Mid / Moderate / High
+Next session date picker
+Cancel and Save & schedule follow-up actions
+Purpose in the system
+Filing the clinical record and scheduling the client's next appointment happen in a single step, keeping documentation and scheduling synchronised rather than treating them as separate tasks.
+4. Legal Advisor — Legal Guidance Console
+The Legal Advisor console connects registered legal advisors with legal questions raised by users through the in-app AI Legal Aid chatbot, and lets them manage the platform's public legal-guidance resource library.
+4.1  Legal Queries Dashboard
+
+Function
+The advisor's primary workspace for handling incoming legal questions and maintaining public guidance resources.
+Key components
+Counters: Open queries (9), Answered today (14), Avg response time (3.1 hr), Resources published (6)
+Query Queue — incoming questions (e.g. 'Cyber blackmail question', 'Workplace rights', 'Custody & safety planning', 'Restraining order process') with status tags (New / In progress / Answered) and a Respond or Continue action per item
+Monthly Impact panel — progress bar of queries answered this month (e.g. '215 of 250 — 87%')
+Resource Library — published guides that feed the user-side 'Know Your Rights' hub (e.g. 'Filing a police complaint – guide', 'Restraining orders explained', 'Know your workplace rights'), each with a view count
+Left navigation: Queries, Resources, Impact, Profile
+Purpose in the system
+Acts as the human-in-the-loop backstop behind the AI Legal Aid chatbot: when the chatbot cannot fully resolve a question, it routes here to a real advisor, and the advisor's answers also seed the public knowledge hub that all users can browse.
+Cross-Role Integration — Case #SL-2291
+The mockups deliberately reuse the same case reference across two different consoles to demonstrate the platform's core contribution: a single incident, tracked consistently across every responsible party.
+Admin — Reports Queue → Case Detail: the AI flags the report High risk (blacklisted language, anonymous filer, evidence attached) and recommends assigning it to Police.
+Police — Case Investigation File: the officer receives the same sealed evidence bundle, location trail, and timeline, and progresses the case through Filed → Under Investigation → Suspect Contacted → Resolved.
+This shared-case architecture is the concrete mechanism referenced in the thesis discussion as the answer to the fragmentation problem in existing tools — where 2six4, Cyber Care, and Fio each solve one isolated piece, Suraksha's Admin, Police, Counselor, and Legal Advisor consoles all read and write against the same case record.
+Known Gaps to Flag
+Language: all mockups are shown in English only — the trilingual (Sinhala / Tamil / English) requirement is not yet visually represented in these staff-facing screens, even though the AI Model Monitoring screen reports per-language coverage.
+Happy-path only: screens show successful flows only — no error states, offline mode, or false-SOS-trigger handling are represented.
+Economic empowerment module: not represented in this Admin / Police / Counselor / Legal set at all — worth deciding whether it needs its own console or screens before final submission.

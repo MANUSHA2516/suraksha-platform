@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: suraksha
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: suraksha
+    ports: ['127.0.0.1:5432:5432']
+    volumes: ['postgres-data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U suraksha']
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    ports: ['127.0.0.1:6379:6379']
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes: ['redis-data:/data']
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:?Set S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:?Set S3_SECRET_KEY}
+    ports: ['127.0.0.1:9000:9000', '127.0.0.1:9001:9001']
+    volumes: ['minio-data:/data']
+  ai:
+    build: ./services/ai
+    ports: ['127.0.0.1:8000:8000']
+    environment:
+      AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:?Set AI_SERVICE_TOKEN}
+      MODEL_PROVIDER: development
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:

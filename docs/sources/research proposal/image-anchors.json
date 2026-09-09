@@ -1,0 +1,187 @@
+[
+  {
+    "paragraph": 333,
+    "target": "media/image1.jpg",
+    "preceding_text": "5.2.1  Onboarding and App Security"
+  },
+  {
+    "paragraph": 337,
+    "target": "media/image2.jpg",
+    "preceding_text": "The first screen presented to a new user during onboarding (Step 1 of 4) allows the selection of the interface language, with Sinhala, Tamil, and English currently supported. Presenting language choice as the very first step ensures the safety and legal-aid content that follows is accessible to users across Sri Lanka's main language groups. Trust indicators for SOS availability, encryption, and identity verification are shown at the bottom of every onboarding screen to reassure the user early in the flow."
+  },
+  {
+    "paragraph": 340,
+    "target": "media/image3.jpg",
+    "preceding_text": "This screen demonstrates the application's core safety mechanism: by default, the app is disguised as an ordinary calculator, and entering a private PIN switches it into \"Guardian mode,\" unlocking the real Suraksha application. A segmented PIN indicator and a clear \"Continue to Suraksha\" action are provided, along with a fallback link to return to the calculator view, so the disguise can be re-engaged instantly if someone else picks up the device."
+  },
+  {
+    "paragraph": 343,
+    "target": "media/image4.jpg",
+    "preceding_text": "As Step 3 of onboarding, the user selects which everyday application Suraksha should imitate on the home screen and app icon — the options implemented are Calculator, Notes, and Weather. This feature is central to the survivor-safety model of the application, allowing the tool to remain hidden from an abuser who inspects the victim's phone, while remaining one PIN entry away from full functionality."
+  },
+  {
+    "paragraph": 347,
+    "target": "media/image5.jpg",
+    "preceding_text": "5.2.2  Home Dashboard and Safety Response"
+  },
+  {
+    "paragraph": 350,
+    "target": "media/image6.jpg",
+    "preceding_text": "Once unlocked, the user lands on a personalised home dashboard (\"Good evening, Nadeesha\") that summarises the account's safety status at a glance. Quick-access tiles are provided for the SOS Emergency trigger, the Evidence Vault (showing item count), the AI-powered Ask Legal Aid chat, a mental-health Check-in, and Jobs/opportunities, with a bottom navigation bar giving persistent access to Home, Safety, Vault, Legal, and Profile sections."
+  },
+  {
+    "paragraph": 353,
+    "target": "media/image7.jpg",
+    "preceding_text": "The SOS screen implements a deliberate \"hold-to-alert\" pattern (hold for 2 seconds) to minimise accidental triggering while still allowing a fast, low-visibility response in a genuine emergency. Activating the button immediately alerts the user's trusted contacts and the nearest police unit and shares the user's live location, with a visible \"Cancel\" option retained in case the alert was triggered by mistake."
+  },
+  {
+    "paragraph": 356,
+    "target": "media/image8.jpg",
+    "preceding_text": "Following a successful SOS trigger, this confirmation screen shows live tracking status, confirms that the nearest police unit has been notified (with distance/ETA), and lists which trusted contacts have been alerted. A prominent \"I am safe now\" button lets the user stand the alert down once the situation has been resolved, closing the loop for the responding parties."
+  },
+  {
+    "paragraph": 359,
+    "target": "media/image9.jpg",
+    "preceding_text": "As the final onboarding step (Step 4 of 4), the user builds a list of trusted contacts who will be notified first during an SOS event, before police involvement, giving the user a softer first line of support. Each contact shows their relationship to the user and phone number, and additional contacts can be added at any time from Settings."
+  },
+  {
+    "paragraph": 362,
+    "target": "media/image10.jpg",
+    "preceding_text": "This screen allows the user to share their real-time location with a specific trusted contact (\"Share with Amma\") for a defined duration (e.g., 2 hours), visualised on a live map. A single toggle enables or disables sharing, and a \"Stop sharing\" action is always available, balancing safety benefits with the user's control over their own privacy."
+  },
+  {
+    "paragraph": 366,
+    "target": "media/image11.jpg",
+    "preceding_text": "5.2.3  Evidence Collection and AI-Assisted Detection"
+  },
+  {
+    "paragraph": 369,
+    "target": "media/image12.jpg",
+    "preceding_text": "This screen lets the user upload a screenshot or paste text of a message they have received, which is then analysed by the platform's AI harassment-detection model (supporting Sinhala, Tamil, and English). In the implemented example, the model flags \"Harassment detected — threatening language pattern\" with an 87% confidence score, and offers the user the option to Dismiss the flag or Escalate to Legal Aid directly from the result."
+  },
+  {
+    "paragraph": 372,
+    "target": "media/image13.jpg",
+    "preceding_text": "Following a scan, this screen presents the full AI risk classification for the submitted message, in this case a High-risk / Threat + Blackmail classification at 92% model confidence. The result is saved automatically to the user's encrypted evidence vault, and direct actions are provided to file a legal-aid report or continue the conversation with the Legal Aid chatbot, along with a short explanation of what happens next and how the evidence is protected."
+  },
+  {
+    "paragraph": 375,
+    "target": "media/image14.jpg",
+    "preceding_text": "The Evidence Vault provides tamper-evident, encrypted storage for all evidence the user has collected, including screenshots, voice notes, and location trails, each timestamped and labelled with its type. A single \"Add evidence\" action lets the user grow this collection at any time, and the vault contents can later be attached directly to a formal report."
+  },
+  {
+    "paragraph": 378,
+    "target": "media/image15.jpg",
+    "preceding_text": "This screen allows the user to capture or import new evidence in four formats — Photo, Audio, Video, or Chat log — together with an optional note describing what happened, when, and where. Once submitted, items are immediately \"Encrypted & saved\" to the vault, reinforcing the chain-of-custody requirements needed if the evidence is later used in a legal or police process."
+  },
+  {
+    "paragraph": 382,
+    "target": "media/image16.jpg",
+    "preceding_text": "5.2.4  Reporting and Legal Aid"
+  },
+  {
+    "paragraph": 385,
+    "target": "media/image17.jpg",
+    "preceding_text": "This is Step 1 of the reporting workflow, where the user selects the category that best matches their situation from options such as Cyber Harassment, Domestic Violence, Workplace Harassment, and Public Transport Abuse. Categorising the incident at the outset allows the system to route the report to the correct downstream workflow and to pre-fill relevant legal guidance later in the process."
+  },
+  {
+    "paragraph": 388,
+    "target": "media/image18.jpg",
+    "preceding_text": "As Step 2 of 3, the report form collects structured details of the incident — when it happened, supporting evidence pulled directly from the Evidence Vault, and a free-text description — while an \"Submit anonymously\" toggle lets the user choose whether to hide their identity from anyone but the assigned case handler. This balances the need for actionable detail with the user's right to control their own exposure."
+  },
+  {
+    "paragraph": 391,
+    "target": "media/image19.jpg",
+    "preceding_text": "Once submitted, the user can follow their case's progress through a simple status tracker — Received, Under review, and further stages — matching the same case reference number used across the Admin and Police dashboards. A \"Message case officer\" action keeps a direct communication channel open, and the screen reiterates that the case is encrypted and tied to the same #SL-2291 identifier used across the whole platform."
+  },
+  {
+    "paragraph": 394,
+    "target": "media/image20.jpg",
+    "preceding_text": "The AI Legal Aid Chat gives the user instant, conversational access to plain-language legal information (for example, an explanation of the Computer Crimes Act No. 24 of 2007) and can guide the user step-by-step through filing a formal report or connecting them directly with a human legal advisor. The chat is marked confidential and available 24/7, reducing the barrier to seeking legal guidance immediately after an incident."
+  },
+  {
+    "paragraph": 398,
+    "target": "media/image21.jpg",
+    "preceding_text": "5.2.5  Community and Wellbeing"
+  },
+  {
+    "paragraph": 401,
+    "target": "media/image22.jpg",
+    "preceding_text": "The Community screen is a moderated space where users can anonymously share their experiences and receive peer support, with each post showing relative time and comment count. All posts pass through the AI content-moderation pipeline (see Section 5.6.5) before being visible to other users, ensuring the space remains safe and constructive."
+  },
+  {
+    "paragraph": 404,
+    "target": "media/image23.jpg",
+    "preceding_text": "Implemented as a short, GAD-7-style screening questionnaire (\"How are you, really?\"), this screen periodically checks in on the user's emotional wellbeing through simple, non-clinical questions such as feeling tense or on edge. A progress indicator (Question 3 of 9) and reassurance text (\"This is not a diagnosis\") keep the tone supportive rather than clinical."
+  },
+  {
+    "paragraph": 407,
+    "target": "media/image24.jpg",
+    "preceding_text": "On completion, the check-in produces a plain-language result — in this example, \"Mild anxiety\" with a score of 8/21 — along with a note that results are private and not shared without consent. A direct \"Book a counselor\" call-to-action bridges the wellbeing check straight into professional support if the user chooses to proceed."
+  },
+  {
+    "paragraph": 413,
+    "target": "media/image25.jpg",
+    "preceding_text": "The Police dashboard gives on-duty officers a real-time operational view of SOS alerts and assigned cases within their jurisdiction. It is optimised for rapid triage and status reporting rather than the broader platform-management functions available to Administrators."
+  },
+  {
+    "paragraph": 416,
+    "target": "media/image26.jpg",
+    "preceding_text": "This is the officer's landing screen, showing a live map of active SOS signals, summary counters (active SOS, alerts assigned to the officer, average response time, and cases resolved today), and a prioritised Alert Queue. Each alert card shows its type, location, and elapsed time, with a one-tap \"Respond\" action, allowing an officer to move from awareness to action within seconds of an alert being raised."
+  },
+  {
+    "paragraph": 419,
+    "target": "media/image27.jpg",
+    "preceding_text": "Opening a case from the queue presents the full investigation file: a sealed, hash-verified evidence bundle carried over from the user's report, a location trail reconstructed from the user's last known GPS points, and a chronological timeline of every action taken on the case so far. Primary actions — Update case status, Request additional evidence, and Escalate to CID — are grouped clearly alongside the case metadata (status, priority, category, and assigned officer), giving the officer everything needed to act without leaving the screen."
+  },
+  {
+    "paragraph": 425,
+    "target": "media/image28.jpg",
+    "preceding_text": "The Counselor dashboard supports the clinical and pastoral-care side of the platform, allowing licensed counselors to manage their caseload, review client wellbeing history, and record session outcomes in a structured, auditable way."
+  },
+  {
+    "paragraph": 428,
+    "target": "media/image29.jpg",
+    "preceding_text": "The counselor's home screen summarises the day's workload — sessions scheduled today, active clients, unread messages, and sessions completed this week — alongside a chronological list of Today's Sessions, each tagged with the client's presenting concern (e.g., Anxiety, Crisis follow-up) and a one-tap Join or View action. A Recent Messages panel and weekly-progress bar are shown alongside, keeping communication and caseload targets visible without needing to navigate away."
+  },
+  {
+    "paragraph": 431,
+    "target": "media/image30.jpg",
+    "preceding_text": "Selecting a client opens an anonymised client-session detail view combining a wellbeing snapshot (most recent screening score, risk level, and number of prior sessions), a full session history with duration and modality (chat/video), and free-text care notes documenting clinical observations and recommended cadence. Quick actions — Start session, View full history, and Escalate to crisis team — are placed prominently for time-sensitive decisions, while the client's identity remains anonymised in line with confidentiality requirements."
+  },
+  {
+    "paragraph": 437,
+    "target": "media/image31.jpg",
+    "preceding_text": "The Legal Advisor dashboard connects registered advisors with legal questions raised by users through the Legal Aid Chat, and lets them manage the platform's public legal-guidance resources."
+  },
+  {
+    "paragraph": 444,
+    "target": "media/image32.jpg",
+    "preceding_text": "5.6.1  Platform Overview"
+  },
+  {
+    "paragraph": 448,
+    "target": "media/image33.jpg",
+    "preceding_text": "5.6.2  User Management"
+  },
+  {
+    "paragraph": 452,
+    "target": "media/image34.jpg",
+    "preceding_text": "5.6.3  Reports Queue and Case Escalation"
+  },
+  {
+    "paragraph": 455,
+    "target": "media/image35.jpg",
+    "preceding_text": "The Reports Queue is the administrator's central triage tool, listing every incoming complaint with its reference number, category, priority, status, assigned handler, and time filed, filterable by New, In review, Escalated, In progress, and Resolved. Colour-coded priority tags (e.g., High priority in red) allow the administrator to quickly identify which of the platform's open reports require the most urgent attention."
+  },
+  {
+    "paragraph": 459,
+    "target": "media/image36.jpg",
+    "preceding_text": "5.6.4  Content Moderation"
+  },
+  {
+    "paragraph": 463,
+    "target": "media/image37.jpg",
+    "preceding_text": "5.6.5  AI Model Monitoring"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Suraksha",
+    "slug": "suraksha",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "suraksha",
+    "ios": {
+      "bundleIdentifier": "org.suraksha.prototype",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Unlock your private Suraksha workspace."
+      }
+    },
+    "android": {
+      "package": "org.suraksha.prototype"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-local-authentication",
+      "expo-document-picker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Share your location only when you choose to use safety features."
+        }
+      ],
+      "./plugins/with-disguise.cjs"
+    ]
+  }
+}

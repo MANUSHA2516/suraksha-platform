@@ -1,0 +1,1026 @@
+SURAKSHA
+User-Side Mobile Application — Complete Screen-by-Screen Reference
+Actor documented in this reference: End User (Survivor / Person at risk)
+31 implemented screens, grouped into five functional areas
+About this document
+Suraksha is a multi-role, AI-assisted safety, reporting, and support platform designed for women and at-risk individuals in Sri Lanka, developed as the subject of the accompanying research proposal (Chapter 1: Introduction). The platform's User side is a disguised, encrypted mobile application intended to be used discreetly by a survivor or a person at risk, and is organised into five functional areas: onboarding and app security, home and safety response, evidence collection and AI-assisted harassment detection, reporting and legal aid, and community and wellbeing support.
+The screens catalogued below are taken directly from the provided user-side UI mockup. Twenty-four of the thirty-one screens correspond one-to-one with figures already described in the research proposal's results chapter (cross-referenced where applicable); the remaining seven screens are the onboarding, account-creation, and app-security steps that precede those figures in the mockup and are described here for the first time, written to be consistent with the platform's stated design principles (trilingual support, PIN/biometric app-lock, disguise mode, encrypted evidence, and NIC-based identity). Minor factual details have been corrected to match exactly what is shown on each screen (for example, the display name shown on the Home Dashboard and the exact bottom-navigation labels).
+Note on scope: this mockup set covers the User (mobile) interface only. The research proposal separately describes four further web-dashboard interfaces — Police, Counselor, Legal Advisor, and Admin — which are not part of the image supplied for this document and are therefore not included here.
+
+A. Onboarding, Registration and App Security
+The onboarding sequence is the survivor's first contact with Suraksha. It is designed to build trust before any sensitive information is collected, to verify identity through a lightweight NIC-based flow, and to immediately establish the two safety mechanisms that make the app usable in an abusive household: a PIN/biometric lock and a disguised app identity.
+Screen 1: Welcome to Suraksha
+Primary Actor: New User (first-time visitor)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This is the splash screen shown the moment the application icon is opened for the very first time, before onboarding begins. It presents the Suraksha shield-and-checkmark mark together with the app name in a calm, reassuring layout, establishing the platform's protective identity before any personal data is requested. A three-dot progress indicator at the bottom hints that a short guided setup follows.
+Key Functions:
+Introduces the Suraksha brand and its protective purpose
+Signals that a short, guided setup flow follows
+Single "Get Started" action moves the user into onboarding
+Screen 2: Secure Login / Register
+Primary Actor: Returning User / New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This is the authentication gateway. A segmented control lets the user switch between "Log In" and "Register", and — unlike a conventional email/password form — identity is established using the user's National Identity Card (NIC) number together with their phone number. This mirrors the identity-verification model used elsewhere in the platform, since the same NIC identity is later checked by an Administrator when verifying professional and community accounts. Trust badges for SOS, Encryption and Verification are pinned to the bottom of the screen, reassuring the user of the platform's safety posture at the very first sensitive input.
+Key Functions:
+NIC number + phone number used as the login/registration identifier
+One-tap toggle between Log In and Register
+Persistent SOS / Encrypted / Verified trust indicators
+"Register with your NIC in one step" shortcut for new users
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Screen 3: Choose Your Language
+(Corresponds to Figure 1 in the Chapter 5 results section of the research proposal)
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: Presented as part of the onboarding wizard, this screen lets the user pick the interface language from Sinhala, Tamil, and English. Placing language choice this early ensures that every subsequent safety and legal-aid screen is accessible to users from Sri Lanka's three main language communities, directly supporting the trilingual requirement identified as a gap in existing local safety apps. A progress stepper across the top tracks the user's position in the onboarding flow, and the SOS/Encrypted/Verified trust row reappears at the bottom.
+Key Functions:
+Selects interface language (Sinhala / Tamil / English)
+Sets the language used for all later legal, AI-detection, and support content
+Changeable later at any time from Settings
+
+
+
+
+
+
+
+
+
+
+
+Screen 4: Onboarding Highlight — "One Tap. Instant Help."
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The first of three feature-highlight cards shown after language selection, introducing the SOS mechanism before the user ever needs it. It explains in one sentence that a single trigger sends the user's live location to trusted contacts and the nearest verified responder, so that when a real emergency later occurs the behaviour of the SOS button is already familiar rather than something to be learned under stress.
+Key Functions:
+Previews the SOS / emergency-alert capability
+Sets expectations: one action, live location shared, trusted contacts + responder notified
+Skippable — a "Skip" link is provided for returning or impatient users
+
+
+
+
+
+
+
+Screen 5: Onboarding Highlight — "Your Evidence, Encrypted"
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The second onboarding highlight introduces the Evidence Vault concept ahead of first use. It tells the user that screenshots, audio, and location data can be stored safely, hidden from anyone else who uses the same phone, previewing the encrypted, tamper-evident storage that underpins later evidence-collection and legal-reporting screens.
+Key Functions:
+Previews encrypted evidence storage (screenshots, audio, location)
+Reassures the user that vault contents remain hidden from other phone users
+Prepares the user for the disguise/PIN mechanism introduced next
+
+
+
+
+
+
+
+
+Screen 6: Onboarding Highlight — "Always Someone Watching Over You"
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The third and final onboarding highlight introduces the human side of the platform: a always-available, verified responder network standing behind the automated features. It closes the feature-preview carousel and hands the user off to account creation with a "Get Started" action.
+Key Functions:
+Previews the 24/7 verified-responder network behind SOS and reporting
+Final step of the feature-highlight carousel before registration
+
+
+
+
+
+
+
+
+
+Screen 7: Create Your Account
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This is the registration form, collecting the minimum information needed to create an account: full name, mobile number, and a password (with an inline password-strength requirement of at least 8 characters, a number, and a symbol). A mandatory checkbox confirms agreement to the Terms and Privacy Policy and that the user is 16 or older. A progress stepper shows this as one step within account setup, and a "Sign in" link is offered for anyone who already has an account and reached this screen by mistake.
+Key Functions:
+Captures full name, mobile number, and password
+Enforces password-strength and age/consent requirements before account creation
+Links back to Sign In for existing users
+
+
+
+
+
+
+Screen 8: Secure Your App (PIN Setup)
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: Immediately after account creation, the user is required to set the 6-digit PIN that will later unlock the disguised app (see Figure 2 / Guardian Mode, below). A numeric keypad is used to enter and confirm the PIN, and a toggle is provided to additionally enable fingerprint unlock for a faster, equally private alternative. This step operationalises the "encrypted and disguise-protected" promise made during onboarding before the user leaves the setup flow.
+Key Functions:
+Sets the 6-digit PIN used to unlock Guardian Mode from the disguise
+Optional fingerprint unlock toggle
+Changeable later from Settings → App lock & disguise mode
+
+
+
+
+
+
+
+
+
+Screen 9: Choose Your Disguise
+(Corresponds to Figure 3 in the Chapter 5 results section of the research proposal)
+Primary Actor: New User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: As the final configuration step before the app is first used, the user selects which everyday application Suraksha should imitate on the home screen and app icon — the options implemented are Calculator, Notes, and Weather. This is central to the survivor-safety model of the application: it allows the tool to remain hidden from an abuser who inspects the victim's phone, while remaining only one correct PIN entry away from full functionality. The choice can be changed later at any time from Settings.
+Key Functions:
+Selects the disguise identity: Calculator, Notes, or Weather
+Determines the home-screen icon and the app's default, harmless-looking appearance
+Reversible at any time from Settings
+
+
+
+
+
+Screen 10: Guardian Mode (Disguise Unlock)
+(Corresponds to Figure 2 in the Chapter 5 results section of the research proposal)
+Primary Actor: Returning User (post-onboarding)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This screen demonstrates the application's core safety mechanism in daily use: by default the app is disguised as an ordinary utility (calculator, notes, or weather, per the user's choice), and entering the private PIN set up earlier lifts the disguise and switches the device into "Guardian mode," unlocking the real Suraksha application. A segmented PIN-progress indicator and a clear "Continue to Suraksha" action are provided, along with a "Back to calculator" fallback link, so the disguise can be re-engaged instantly if someone else picks up the device.
+Key Functions:
+PIN entry gate that lifts the disguise and reveals the real application
+Instant fallback back to the disguised utility if interrupted
+The single mechanism separating an abuser's casual inspection from the survivor's private tools
+
+
+
+
+
+Screen 11: Settings — Account and Privacy
+(Corresponds to Figure 4 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The Settings screen consolidates all safety-critical configuration in one place: interface language, the app-lock/disguise mode (PIN and fingerprint), default location-sharing behaviour, notification preferences, and information about the current app version. A clearly separated, high-friction "Delete my data" action — protected behind an explicit confirmation dialog warning that the action permanently erases the account, vault contents, and messages and cannot be undone — gives the user full, unambiguous control to walk away from the platform entirely at any time.
+Key Functions:
+Central hub for language, app-lock/disguise, location-sharing, and notification settings
+Displays current app version under "About Suraksha"
+Irreversible, confirmation-gated full account and data deletion
+
+B. Home Dashboard and Safety Response
+Once unlocked, the user's day-to-day experience of the app centres on rapid, low-friction access to emergency response and location safety.
+Screen 12: Home Dashboard
+(Corresponds to Figure 5 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: Once unlocked, the user lands on a personalised home dashboard ("Good evening, Risini — Here's your safety overview") that summarises the account's safety status at a glance. Quick-access tiles are provided for the SOS Emergency trigger, the Evidence Vault (showing item count), the AI-powered Ask Legal Aid chat, a mental-health Check-in, and Jobs/opportunities, with a bottom navigation bar (Home, Knowledge, SOS, Vault, Profile) giving persistent access to every major functional area of the app.
+Key Functions:
+Personalised greeting and at-a-glance safety-status overview
+One-tap quick-access tiles: SOS Emergency, Evidence Vault, Ask Legal Aid, Check-in, Jobs
+Persistent bottom navigation across the app's major sections
+Screen 13: SOS Emergency
+(Corresponds to Figure 6 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User (in distress)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The SOS screen implements a deliberate "hold-to-alert" pattern (hold for 2 seconds) to minimise accidental triggering while still allowing a fast, low-visibility response in a genuine emergency. Activating the button immediately alerts the user's trusted contacts and the nearest police unit and shares the user's live location, with a visible "Cancel" option retained in case the alert was triggered by mistake.
+Key Functions:
+2-second press-and-hold gesture prevents accidental triggering
+Simultaneously notifies trusted contacts and the nearest police unit with live location
+Cancel option available up to the point of confirmed dispatch
+
+
+
+
+
+
+
+
+Screen 14: Help Is On The Way
+(Corresponds to Figure 7 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User (post-SOS trigger)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: Following a successful SOS trigger, this confirmation screen shows live tracking status on a map, confirms that the nearest police unit has been notified (with distance shown, e.g. 1.2 km away), and lists which trusted contacts have been alerted. A prominent "I am safe now" button lets the user stand the alert down once the situation has been resolved, closing the loop for the responding parties.
+Key Functions:
+Live map showing the user's position and the responding police unit
+Confirms which police unit and which trusted contacts have been notified
+"I am safe now" action to stand down an active alert
+
+
+
+
+
+Screen 15: Add Trusted Contacts
+(Corresponds to Figure 8 in the Chapter 5 results section of the research proposal)
+Primary Actor: New or Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: As part of onboarding (and revisitable at any time), the user builds a list of trusted contacts who will be notified first during an SOS event, before or alongside police involvement, giving the user a softer first line of support. Each contact shows their relationship to the user (e.g. "Amma", "Friend") and phone number, with priority contacts flagged, and additional contacts can be added at any time from Settings.
+Key Functions:
+Add / remove trusted contacts with name, relationship, and phone number
+Flags priority contacts notified first during an SOS event
+Extensible later from Settings without repeating onboarding
+
+
+
+Screen 16: Sharing Location
+(Corresponds to Figure 9 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This screen allows the user to share their real-time location with a specific trusted contact ("Share with Amma") for a defined duration (shown here as 2 hours), visualised on a live map. A single toggle enables or disables sharing, and a "Stop sharing" action is always available, balancing safety benefits with the user's control over their own privacy.
+Key Functions:
+Live-location sharing with a named trusted contact
+Time-boxed sharing window (e.g. 2 hours) rather than indefinite tracking
+Toggle on/off and an always-available "Stop sharing" override
+
+
+
+
+
+
+
+
+
+
+
+Screen 17: Route Home (Safe Navigation)
+(Corresponds to Figure 10 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The Safe Route feature calculates a walking route home while actively avoiding areas that have been reported as danger zones by other users, and flags any low-lit stretches ahead ("Low-lit stretch ahead — reported by 6 users this month"). Colour-coded route segments distinguish the safe path from danger zones, and a "Start safe navigation" action begins live, geo-fenced guidance with automatic alerts if the user deviates into a flagged area.
+Key Functions:
+Routes around community-reported danger zones rather than shortest-path only
+Surfaces crowd-sourced warnings (e.g. poor lighting) along the route
+Live, geo-fenced navigation with deviation alerts once started
+
+C. Evidence Collection and AI-Assisted Detection
+This group of screens turns the app into a forensically sound evidence locker and gives the user an on-demand AI harassment classifier that works across Sinhala, Tamil, and English.
+Screen 18: Evidence Vault
+(Corresponds to Figure 13 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The Evidence Vault provides tamper-evident, encrypted storage for all evidence the user has collected, including screenshots, voice notes, and location trails, each timestamped, labelled with its type (Threat, Audio, GPS), and tagged with when it was added. A single "Add evidence" action lets the user grow this collection at any time, and the vault contents can later be attached directly to a formal report.
+Key Functions:
+Encrypted, tamper-evident storage for screenshots, audio, and location trails
+Per-item timestamp, type tag, and recency label
+Direct attachment of stored items to a new report
+
+
+
+
+
+
+Screen 19: Add Evidence
+(Corresponds to Figure 14 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This screen allows the user to capture or import new evidence in four formats — Photo, Audio, Video, or Chat log — together with an optional note describing what happened, when, and where. Once submitted, items are immediately "Encrypted & saved" to the vault, reinforcing the chain-of-custody requirements needed if the evidence is later used in a legal or police process.
+Key Functions:
+Four capture/import types: Photo, Audio, Video, Chat log
+Optional free-text note for context (what/when/where)
+Immediate encryption on save to preserve chain-of-custody
+
+
+Screen 20: Evidence Detail — Sealed Record (Screenshot_0231)
+(Corresponds to Figure 15 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: Once an item (here, Screenshot_0231) has been attached to a report, it becomes a locked, sealed evidence record: the raw content is hidden behind an encrypted preview that can only be unlocked with the user's PIN, while its capture time, location tag, and SHA-256 integrity hash remain visible and verified. This design preserves evidentiary integrity while still allowing the user to attach the sealed item to an active report.
+Key Functions:
+PIN-gated encrypted preview once an item is sealed to a case
+Visible, verified capture time, location tag, and SHA-256 integrity hash
+"Attach to report" action without ever exposing the raw file unnecessarily
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Screen 21: Scan a Message
+(Corresponds to Figure 11 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This screen lets the user upload a screenshot or paste the text of a message they have received, which is then analysed by the platform's AI harassment-detection model (supporting Sinhala, Tamil, and English). In the implemented example, the model flags "Harassment detected — threatening language pattern" with an 87% confidence score, and offers the user the option to Dismiss the flag or Escalate to Legal Aid directly from the result.
+Key Functions:
+Upload screenshot or paste raw text for AI harassment analysis
+Trilingual detection model (Sinhala / Tamil / English)
+Confidence-scored flag with Dismiss or Escalate-to-Legal-Aid actions
+
+
+
+
+
+
+
+
+
+
+
+
+Screen 22: AI Analysis Result
+(Corresponds to Figure 12 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+Description & Function: Following a scan, this screen presents the full AI risk classification for the submitted message — in this case a High-risk / Threat + Blackmail classification at 92% model confidence, with a plain-language note that the language matches known coercion patterns. The result is saved automatically to the user's encrypted evidence vault and filed, and a direct "Talk to Legal Chatbot" action is provided, along with a short explanation of what happens next (evidence encrypted, available in the vault, legal aid notified only if the user chooses to file a report).
+Key Functions:
+Full risk classification with confidence score and plain-language rationale
+Automatic save-to-vault and filing of the analysed message
+One-tap handoff into the Legal Aid chatbot
+
+D. Reporting and Legal Aid
+This group converts a scanned threat or a lived incident into a trackable, case-numbered report, and gives the user always-available access to plain-language legal guidance.
+Screen 23: Legal Aid Chat
+(Corresponds to Figure 19 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The AI Legal Aid Chat gives the user instant, conversational access to plain-language legal information (for example, an explanation of the Computer Crimes Act No. 24 of 2007 in response to a question about online blackmail) and can guide the user step-by-step through filing a formal report or connecting them directly with a human legal advisor. The chat is marked confidential and available 24/7, reducing the barrier to seeking legal guidance immediately after an incident.
+Key Functions:
+Conversational, plain-language answers to legal questions
+Guides the user directly into the report-filing flow on request
+Marked confidential and available 24/7
+
+
+
+Screen 24: Start a Report — "What Happened?" (Category Selection)
+(Corresponds to Figure 16 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This is Step 1 of the reporting workflow, where the user selects the category that best matches their situation from options such as Cyber Harassment, Domestic Violence, Workplace Harassment, and Public Transport Abuse. Categorising the incident at the outset allows the system to route the report to the correct downstream workflow and to pre-fill relevant legal guidance later in the process.
+Key Functions:
+Category selection: Cyber Harassment, Domestic Violence, Workplace Harassment, Public Transport Abuse
+Determines downstream routing and applicable legal guidance
+First of a 3-step report-filing wizard
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Screen 25: Cyber Harassment Report Form
+(Corresponds to Figure 17 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: As Step 2 of the reporting workflow, the report form collects structured details of the incident — when it happened, supporting evidence pulled directly from the Evidence Vault ("2 items from Vault selected"), and an optional free-text description — while a "Submit anonymously" toggle lets the user choose whether to hide their identity from anyone but the assigned case handler. This balances the need for actionable detail with the user's right to control their own exposure.
+Key Functions:
+Structured incident details: date, linked vault evidence, free-text description
+"Submit anonymously" toggle to hide identity from all but the case handler
+Direct evidence attachment from the Vault rather than re-uploading
+
+
+
+
+
+Screen 26: Report Tracking (#SL-2291)
+(Corresponds to Figure 18 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+Description & Function: Once submitted, the user can follow their case's progress through a simple status tracker — Received, Under review (shown here as assigned to the Cyber Crime unit), and Awaiting update, with an estimated turnaround time — matching the same case reference number used across the Admin and Police dashboards elsewhere in the platform. A "Message case officer" action keeps a direct communication channel open, and the screen reiterates that the case is encrypted and tied to the same #SL-2291 identifier used across the whole system.
+Key Functions:
+Step-based status tracker: Received → Under review → Awaiting update
+Shared case reference number (#SL-2291) traceable across Police/Admin views
+Direct "Message case officer" communication channel
+
+E. Community, Legal Knowledge and Wellbeing
+The final group of screens supports the platform's preventive and empowerment goals: peer support, self-directed legal literacy, and a low-friction bridge into professional mental-health care.
+Screen 27: Community
+(Corresponds to Figure 21 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: The Community screen is a moderated space where users can anonymously share their experiences and receive peer support, with each post showing relative time and comment count (e.g. "Finally reported after 6 months, feeling lighter today"). Every post passes through the AI content-moderation pipeline before being visible to other users, ensuring the space remains safe and constructive rather than a vector for further harassment.
+Key Functions:
+Anonymous posting and peer-support commenting
+Like/comment counts surfaced per post
+All content passes AI moderation before publication
+
+
+
+
+Screen 28: Know Your Rights (Knowledge Hub)
+(Corresponds to Figure 20 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This screen provides a searchable library of plain-language legal guides covering topics such as the Cyber Crimes Act, the Domestic Violence Act, workplace protections, and how to file a police complaint. Each guide displays an estimated reading time (typically 4–8 minutes) and is available in all three supported languages, supporting informed decision-making independently of the AI chat.
+Key Functions:
+Searchable library of plain-language legal guides
+Per-guide estimated reading time
+Available in Sinhala, Tamil, and English
+
+
+
+
+
+
+
+
+
+Screen 29: Wellness Check-In — "How Are You, Really?"
+(Corresponds to Figure 22 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: Implemented as a short, GAD-7-style screening questionnaire, this screen periodically checks in on the user's emotional wellbeing through simple, non-clinical questions such as feeling tense or on edge in the past week. A progress indicator (Question 3 of 9) and reassurance text keep the tone supportive rather than clinical, and results remain private throughout.
+Key Functions:
+Short, validated-style (GAD-7-inspired) wellbeing screener
+Question-by-question progress indicator
+Explicitly framed as non-diagnostic and private
+
+
+
+
+
+
+
+
+
+
+
+
+Screen 30: Your Check-In Result
+(Corresponds to Figure 23 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: On completion, the check-in produces a plain-language result — in this example, "Mild anxiety" with a score of 8/21 — along with a note that results are private and not shared without consent and that this is not a diagnosis. A direct "Book a counselor" call-to-action bridges the wellbeing check straight into professional support if the user chooses to proceed, with a suggested retake in 2 weeks.
+Key Functions:
+Plain-language result and numeric score (e.g. 8/21) from the check-in
+Explicit "not a diagnosis", private, not-shared framing
+One-tap bridge into booking a counselor
+
+
+
+
+
+
+
+
+Screen 31: Book a Counselling Session
+(Corresponds to Figure 24 in the Chapter 5 results section of the research proposal)
+Primary Actor: Registered User
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description & Function: This screen lets the user choose from a list of available counselors, each showing their specialisation, language, and next available slot (e.g. a clinical counsellor available today at 4pm, a trauma-informed counsellor tomorrow, a family counsellor on Friday), and confirm a booking with a single tap. The session is explicitly marked as confidential and free of charge, removing two common barriers — cost and privacy concerns — to seeking professional help.
+Key Functions:
+Browse counselors by specialisation, language, and next available slot
+One-tap booking confirmation
+Explicitly confidential and free of charge
