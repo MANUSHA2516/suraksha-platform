@@ -18,7 +18,7 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
   const [text, setText] = useState('');
   const [pin, setPin] = useState('');
   const [preview, setPreview] = useState('');
-  const [imagePreview,setImagePreview]=useState('');
+  const [imagePreview, setImagePreview] = useState('');
   const [scan, setScan] = useState<any>(null);
   if (id === 'M18')
     return (
@@ -127,9 +127,9 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
             onPress={async () => {
               const result = await api(`/evidence/${route.params.id}/unlock`, 'POST', { pin });
               const bytes = await evidenceBytes(route.params.id, result.proof);
-              if(detail.data.mediaType.startsWith('image/')&&bytes.length<=5*1024*1024){
-                const base64=btoa(Array.from(bytes,b=>String.fromCharCode(b)).join(''));
-                setImagePreview('data:'+detail.data.mediaType+';base64,'+base64);
+              if (detail.data.mediaType.startsWith('image/') && bytes.length <= 5 * 1024 * 1024) {
+                const base64 = btoa(Array.from(bytes, (b) => String.fromCharCode(b)).join(''));
+                setImagePreview('data:' + detail.data.mediaType + ';base64,' + base64);
               }
               setPreview(
                 detail.data.mediaType.startsWith('text/')
@@ -139,7 +139,14 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
               setPin('');
             }}
           />
-          {imagePreview&&<Image accessibilityLabel="Unlocked evidence preview" source={{uri:imagePreview}} style={{height:300,width:'100%'}} resizeMode="contain"/>}
+          {imagePreview && (
+            <Image
+              accessibilityLabel="Unlocked evidence preview"
+              source={{ uri: imagePreview }}
+              style={{ height: 300, width: '100%' }}
+              resizeMode="contain"
+            />
+          )}
           {preview && <Text style={s.text}>{preview}</Text>}
         </Card>
         <Card>

@@ -1,3 +1,24 @@
-import { NativeModules,Platform } from 'react-native';
-export interface DisguiseProvider {set(value:'calculator'|'notes'|'weather'):Promise<{launcherChanged:boolean;notice:string}>}
-export const disguiseProvider:DisguiseProvider={async set(value){if(Platform.OS==='android'&&NativeModules.SurakshaDisguise){await NativeModules.SurakshaDisguise.setDisguise(value);return {launcherChanged:true,notice:'Android launcher alias changed. System settings may still identify Suraksha.'};}return {launcherChanged:false,notice:Platform.OS==='ios'?'Internal disguise set. iOS launcher changes are not configured.':'Internal disguise set. Launcher aliases require a native development build, not Expo Go.'};}};
+import { NativeModules, Platform } from 'react-native';
+export interface DisguiseProvider {
+  set(
+    value: 'calculator' | 'notes' | 'weather',
+  ): Promise<{ launcherChanged: boolean; notice: string }>;
+}
+export const disguiseProvider: DisguiseProvider = {
+  async set(value) {
+    if (Platform.OS === 'android' && NativeModules.SurakshaDisguise) {
+      await NativeModules.SurakshaDisguise.setDisguise(value);
+      return {
+        launcherChanged: true,
+        notice: 'Android launcher alias changed. System settings may still identify Suraksha.',
+      };
+    }
+    return {
+      launcherChanged: false,
+      notice:
+        Platform.OS === 'ios'
+          ? 'Internal disguise set. iOS launcher changes are not configured.'
+          : 'Internal disguise set. Launcher aliases require a native development build, not Expo Go.',
+    };
+  },
+};

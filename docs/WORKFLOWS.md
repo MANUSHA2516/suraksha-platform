@@ -1,10 +1,10 @@
-# Workflows — proposed implementation baseline
+# Workflows — source requirements and implementation mapping
 
-All workflows are requirements, not implemented behavior. Screen IDs resolve in SCREEN_INVENTORY.md.
+These workflows preserve source requirements. Concrete code/status is mapped in TRACEABILITY_MATRIX.md; OPEN_GAPS.md qualifies external dispatch, clinical scoring, OCR, native behavior and legal content. Screen IDs resolve in SCREEN_INVENTORY.md.
 
 ## Onboarding, security and privacy
 
-M01 → M02 identity gateway → M03 locale → M04/M05/M06 skippable explanations → M07 registration → M08 six-digit PIN entry/confirmation and optional supported biometric → M09 disguise → M15 trusted contacts → M12 Home. Existing accounts authenticate, then unlock through M10. Authentication proof is missing from M02 and must be added per C03. Do not issue a session based only on NIC and phone.
+M01 → M02 identity gateway → M03 locale → M04/M05/M06 skippable explanations → M07 registration → M08 six-digit PIN entry/confirmation and optional supported biometric → M09 disguise → M15 trusted contacts → M12 Home. Existing accounts authenticate, then unlock through M10. The source omits authentication proof from M02; the implementation adds a password per C03. Do not issue a session based only on NIC and phone.
 
 App launch/re-entry presents chosen utility and locks sensitive routes. A verified PIN or supported native biometric unlocks Guardian Mode. “Back to calculator”/chosen utility immediately clears sensitive views. Relock on backgrounding; secure credential storage and evidence preview cleanup need device tests. M11 edits preferences and starts explicit-confirmation deletion; do not report erasure before object/account cleanup succeeds.
 
@@ -18,13 +18,13 @@ App launch/re-entry presents chosen utility and locks sensitive routes. A verifi
 6. S11 advances investigation stage with notes. A version check prevents lost concurrent updates. M26 receives the safe status projection and message thread for the original reference.
 7. Requests for information, escalation and resolution are typed events on the same case, never copied cases. Internal notes must not leak into the user's timeline.
 
-Proposed canonical stages: FILED → UNDER_INVESTIGATION → SUSPECT_CONTACTED → RESOLVED. Triage NEW/IN_REVIEW and escalation flags are separate fields/events. Exact early-resolution/reopening rules need specification; do not allow arbitrary transitions. Mobile labels Received/Under review/Awaiting update map to actual state/event history, not a fabricated ETA.
+Implemented canonical stages: FILED → UNDER_INVESTIGATION → SUSPECT_CONTACTED → RESOLVED. Triage NEW/IN_REVIEW and escalation flags are separate fields/events. Exact early-resolution/reopening rules need specification; do not allow arbitrary transitions. Mobile labels Received/Under review/Awaiting update map to actual state/event history, not a fabricated ETA.
 
 ## Evidence capture and scan
 
-M19 captures/imports Photo, Audio, Video or Chat log plus context. API checks file constraints and owner, calculates SHA-256, encrypts with AES-256-GCM under a fresh nonce, writes a private random object key and stores metadata. Storage and database are not a single atomic transaction: use pending/finalized records and cleanup compensation. Only finalized evidence appears as saved. M18 lists metadata; M20 requires PIN reauthentication for sealed preview. Report attachments preserve immutable content and custody events.
+M19 imports Photo, Audio, Video or Chat log and creates text notes; native capture remains G19. API checks file constraints and owner, calculates SHA-256, encrypts with AES-256-GCM under a fresh nonce, writes a private random object key and stores metadata. Storage and database are not a single atomic transaction. Metadata is returned after object creation and SQL insert; cleanup/recovery limitations are recorded in G12/G23. M18 lists metadata; M20 requires PIN reauthentication for sealed preview. Report attachments preserve immutable content and custody events.
 
-M21 sends text or OCR-extracted screenshot text to a versioned analyzer. M22 shows classification, risk, available confidence and development/validation status. The analyzed text is encrypted into the vault; a case/legal query requires explicit user action. OCR/AI outage gets a recoverable error, not a synthetic risk score or a false “Filed”.
+M21 sends text to a versioned analyzer. Screenshot OCR remains G19. M22 shows classification, risk, available confidence and development/validation status. The analyzed text is encrypted into the vault; a case/legal query requires explicit user action. OCR/AI outage gets a recoverable error, not a synthetic risk score or a false “Filed”.
 
 ## SOS and location
 

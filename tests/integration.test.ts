@@ -282,6 +282,75 @@ describe('Safety, legal, clinical and moderation flows', () => {
         .summary,
     ).toBe('Private test clinical note');
   });
+  it('books follow-up atomically and rolls back a note when its slot is already taken', async () => {
+    const slot = await db.counselorSlot.create({
+      data: {
+        counselorId: ids.COUNSELOR,
+        startsAt: new Date(Date.now() + 3 * 86400000),
+        durationMinutes: 45,
+      },
+    });
+    const body = {
+      summary: 'Follow-up transaction test',
+      cadence: 'Weekly',
+      risk: 'Low',
+      nextSlotId: slot.id,
+    };
+    const saved = await post('/counseling/sessions/' + appointmentId + '/notes', body, 'COUNSELOR');
+    expect(saved.status).toBe(201);
+    expect(saved.body.followup).toBeTruthy();
+    const next = await db.counselingAppointment.findUnique({ where: { id: saved.body.followup } });
+    expect(next.clientId).toBe(ids.USER);
+    expect(next.counselorId).toBe(ids.COUNSELOR);
+    const count = await db.counselingNote.count({ where: { appointmentId } });
+    const conflict = await post(
+      '/counseling/sessions/' + appointmentId + '/notes',
+      body,
+      'COUNSELOR',
+    );
+    expect(conflict.status).toBe(409);
+    expect(await db.counselingNote.count({ where: { appointmentId } })).toBe(count);
+  });
+  it('withdraws screening consent from the assigned counselor view immediately', async () => {
+    const check = await post('/wellbeing/check-ins', { answer: 'Several days', shared: true });
+    expect(
+      (await get('/counseling/clients/' + appointmentId, 'COUNSELOR')).body.screening,
+    ).not.toBeNull();
+    await request(app.getHttpServer())
+      .patch('/v1/wellbeing/check-ins/' + check.body.id)
+      .set('Authorization', 'Bearer ' + tokens.USER)
+      .send({ shared: false })
+      .expect(200);
+    expect(
+      (await get('/counseling/clients/' + appointmentId, 'COUNSELOR')).body.screening,
+    ).toBeNull();
+  });
+  it('requires an owned unexpired share for foreground location and stops after revocation', async () => {
+    const position = {
+      latitude: 6.9,
+      longitude: 79.8,
+      accuracy: 15,
+      capturedAt: new Date().toISOString(),
+    };
+    expect((await post('/location/events', position)).status).toBe(403);
+    const contact = await post('/contacts', {
+      name: 'Synthetic contact',
+      relationship: 'Friend',
+      phone: '+94000000000',
+    });
+    const share = await post('/location/shares', { contactId: contact.body.id, minutes: 5 });
+    expect(share.status).toBe(201);
+    expect(
+      (await post('/location/shares', { contactId: contact.body.id, minutes: 5 }, 'OTHER_USER'))
+        .status,
+    ).toBe(403);
+    expect((await post('/location/events', position)).status).toBe(201);
+    await request(app.getHttpServer())
+      .delete('/v1/location/shares/' + share.body.id)
+      .set('Authorization', 'Bearer ' + tokens.USER)
+      .expect(200);
+    expect((await post('/location/events', position)).status).toBe(403);
+  });
   it('keeps community content pending then publishes via audited moderation', async () => {
     const p = await post('/community/posts', { body: 'Synthetic peer support story' });
     expect(p.body.status).toBe('PENDING');

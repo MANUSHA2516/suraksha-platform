@@ -12,8 +12,8 @@
   },
   "scripts": {
     "dev:api": "npm run dev -w @suraksha/api",
-    "dev:web": "npm run dev -w @suraksha/web",
-    "dev:mobile": "npm run start -w @suraksha/mobile",
+    "dev:web": "node scripts/run-client.mjs web",
+    "dev:mobile": "node scripts/run-client.mjs mobile",
     "build:packages": "npm run build --workspaces --if-present --include-workspace-root=false -w @suraksha/types -w @suraksha/validation -w @suraksha/shared -w @suraksha/config",
     "build": "npm run build:packages && npm run build -w @suraksha/api && npm run build -w @suraksha/web && npm run build -w @suraksha/mobile",
     "typecheck": "npm run typecheck --workspaces --if-present",

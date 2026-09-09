@@ -1,4 +1,4 @@
-# Requirements — provisional source baseline
+# Requirements — authoritative source baseline
 
 ## Source register and review evidence
 
@@ -7,9 +7,9 @@
 | R | research proposal.docx | 538 extracted paragraphs; eight tables; 37 embedded UI images; methodology, scope, research limitations and references |
 | M | Suraksha_UI_Screens_user NEW RESULT.docx | 1,026 paragraphs; 31 embedded mobile screenshots; Screens 1–31 |
 | S | Suraksha_Screen_Admin,police,counsilor.docx | 204 paragraphs; 16 embedded staff screenshots; §§1.1–4.1 |
-| — | README.md | One-line project title; not a fourth substantive specification |
+| — | README.md | Developer guide; not a substantive source specification |
 
-Extraction output, original-image anchors, table-preserving blocks and SHA-256 source fingerprints are in `sources/`. `scripts/extract_documentation.py` recreates the extraction using Python's standard library. Contact sheets support visual comparison. No DOCX embeddings were present. No PDF or standalone original diagrams were found. The fourth document and the diagrams named in R remain unavailable. Review of all four documents is therefore **not complete**.
+Extraction output, original-image anchors, table-preserving blocks and SHA-256 source fingerprints are in `sources/`. `scripts/extract_documentation.py` recreates the extraction using Python's standard library. Contact sheets support visual comparison. No DOCX embeddings were present. No PDF or standalone original diagrams were found. The user confirmed these THREE DOCX files are the complete available specification (C20). All three were reviewed. Referenced original diagrams are absent; textual relationships define the implementation baseline.
 
 ## Functional requirements
 
@@ -18,7 +18,7 @@ Each inventory entry is independently required; these groups do not replace the 
 | ID | Required behavior | Primary source | Screens |
 |---|---|---|---|
 | F01 | NIC/phone identity gateway, registration consent, secure account, 6-digit PIN, optional biometrics, locale, working disguise and deletion controls | M1–11 | M01–M11 |
-| F02 | Personalized Home and exact primary navigation; Jobs entry only unless fourth source supplies more | M12; R5.7.1 | M12 |
+| F02 | Personalized Home and exact primary navigation; Jobs entry only; no detailed jobs workflow is specified | M12; R5.7.1 | M12 |
 | F03 | Deliberate 2-second SOS activation, persisted emergency, trusted contacts/responder delivery outcomes, live tracking and safe closure | M13–16; S2.2 | M13–M16, S09 |
 | F04 | Consent-bound expiring location sharing, safe routing around reported danger zones, low-light warnings and geofence alerts | M16–17; R1.3 | M16–M17 |
 | F05 | Encrypted object evidence, capture/import four formats, metadata/hash verification, sealed PIN-gated preview and authorized case attachment | M18–20; S1.5/2.3 | M18–M20, S05, S10 |
@@ -32,7 +32,7 @@ Each inventory entry is independently required; these groups do not replace the 
 
 ## Cross-cutting requirements from user instruction and source constraints
 
-| ID | Requirement | Acceptance evidence planned |
+| ID | Requirement | Acceptance evidence (status in TRACEABILITY_MATRIX) |
 |---|---|---|
 | N01 | Shared TypeScript monorepo: React Native, Next.js, NestJS, PostgreSQL/Prisma, separate Python FastAPI AI, Redis/MinIO development infrastructure | Install, migration, seed, builds and both clients using one API |
 | N02 | Argon2 credentials; expiring access tokens; rotating/revocable refresh sessions; audit and backend RBAC on every protected endpoint | Authentication, replay/revocation, all cross-role denials and ownership integration tests |

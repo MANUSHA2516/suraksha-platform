@@ -1,4 +1,4 @@
-import { EmergencyDeliveryProvider,SafeRouteProvider } from './providers';
+import { EmergencyDeliveryProvider, SafeRouteProvider } from './providers';
 import {
   Body,
   Controller,
@@ -26,8 +26,8 @@ export class SafetyController {
     @Inject(Db) private db: Db,
     @Inject(CryptoService) private crypto: CryptoService,
     @Inject(AuthService) private auth: AuthService,
-    @Inject(EmergencyDeliveryProvider) private delivery:EmergencyDeliveryProvider,
-    @Inject(SafeRouteProvider) private routes:SafeRouteProvider,
+    @Inject(EmergencyDeliveryProvider) private delivery: EmergencyDeliveryProvider,
+    @Inject(SafeRouteProvider) private routes: SafeRouteProvider,
   ) {}
   @Roles('USER') @Get('contacts') async contacts(@Req() r: AuthedRequest) {
     return (
@@ -88,7 +88,7 @@ export class SafetyController {
           locationState: location ? 'AVAILABLE' : input.location ? 'STALE' : input.locationState,
           events: { create: { type: 'ACTIVATED', actorId: r.user.id } },
           deliveries: {
-            create: this.delivery.prepare(contacts.map(c=>c.name)),
+            create: this.delivery.prepare(contacts.map((c) => c.name)),
           },
         },
       });
@@ -226,7 +226,7 @@ export class SafetyController {
   }
   @Roles('USER') @Post('routes') async route(@Body() body: unknown) {
     const input = parse(z.object({ origin: positionSchema, destination: positionSchema }), body);
-    return this.routes.plan(input.origin,input.destination,await this.zones());
+    return this.routes.plan(input.origin, input.destination, await this.zones());
   }
   @Get('notifications') notifications(@Req() r: AuthedRequest) {
     return this.db.notification.findMany({
@@ -246,16 +246,18 @@ export class SafetyController {
     let since = new Date();
     return interval(2000).pipe(
       concatMap(async () => {
-        const session = await this.db.refreshSession.findUnique({
-          where: { id: r.sessionId },
-          include: { user: true },
-        });
-        if (!session || session.revokedAt || session.expiresAt < new Date() || session.user.status !== 'ACTIVE' || (session.user.role!=='USER'&&!session.user.verified))
+        let principal;
+        try {
+          principal = await this.auth.principal(
+            r.headers.authorization?.replace(/^Bearer /, '') || r.cookies?.suraksha_access || '',
+          );
+        } catch {
           return { data: { type: 'session.expired' } };
+        }
         const audience = [
           r.user.id,
           ...(r.user.role === 'ADMIN' ? ['ADMIN'] : []),
-          ...(r.user.role === 'POLICE' ? ['POLICE:' + r.user.jurisdiction] : []),
+          ...(principal.user.role === 'POLICE' ? ['POLICE:' + principal.user.jurisdiction] : []),
         ];
         const now = new Date();
         const events = await this.db.outboxEvent.findMany({

@@ -5,7 +5,7 @@ jest.mock('expo-local-authentication', () => ({
 }));
 jest.mock('expo-document-picker', () => ({ getDocumentAsync: jest.fn() }));
 jest.mock('expo-location', () => ({
-  getForegroundPermissionsAsync: jest.fn().mockResolvedValue({granted:false}),
+  getForegroundPermissionsAsync: jest.fn().mockResolvedValue({ granted: false }),
   requestForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'denied' }),
   getCurrentPositionAsync: jest.fn(),
   watchPositionAsync: jest.fn().mockResolvedValue({ remove: jest.fn() }),
@@ -19,4 +19,7 @@ jest.mock('../src/lib/api', () => ({
   useData: jest.fn(() => ({ data: null, isLoading: false, error: null, refetch: jest.fn() })),
 }));
 
-jest.mock('expo-notifications',()=>({requestPermissionsAsync:jest.fn().mockResolvedValue({granted:false}),scheduleNotificationAsync:jest.fn()}));
+jest.mock('expo-notifications', () => ({
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: false }),
+  scheduleNotificationAsync: jest.fn(),
+}));

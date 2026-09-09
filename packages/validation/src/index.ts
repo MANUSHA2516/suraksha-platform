@@ -15,7 +15,11 @@ export const registerSchema = z
   })
   .strict();
 export const loginSchema = z
-  .object({ login: z.string().min(2).max(100), password: z.string().min(1).max(128) })
+  .object({
+    login: z.string().min(2).max(100),
+    password: z.string().min(1).max(128),
+    rememberDevice: z.boolean().optional(),
+  })
   .strict();
 export const reportSchema = z
   .object({

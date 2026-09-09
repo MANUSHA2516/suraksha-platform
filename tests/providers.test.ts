@@ -25,15 +25,13 @@ describe.skipIf(!enabled)('Real MinIO and FastAPI integration', () => {
     await app.init();
     db = app.get(Db);
     const nic = String(Date.now()).slice(-12);
-    const login = await request(app.getHttpServer())
-      .post('/v1/auth/register')
-      .send({
-        name: 'Provider test',
-        nic,
-        phone: '+94000000000',
-        password: 'Synthetic123!',
-        consent: true,
-      });
+    const login = await request(app.getHttpServer()).post('/v1/auth/register').send({
+      name: 'Provider test',
+      nic,
+      phone: '+94000000000',
+      password: 'Synthetic123!',
+      consent: true,
+    });
     expect(login.status).toBe(201);
     token = login.body.accessToken;
     userId = login.body.user.id;

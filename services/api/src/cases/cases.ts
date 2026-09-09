@@ -52,6 +52,12 @@ export class CaseService {
   }
   async view(user: Principal, reference: string) {
     const item = await this.allowed(user, reference);
+    const analyses = await this.db.aIAnalysis.findMany({
+      where: { ownerId: item.ownerId, OR: [
+        { caseId: item.id },
+        { evidenceId: { in: item.evidence.map((link) => link.evidenceId) } },
+      ] },
+    });
     return {
       id: item.id,
       reference: item.reference,
@@ -77,7 +83,7 @@ export class CaseService {
           ? { privateNote: this.crypto.open(e.privateCipher) }
           : {}),
       })),
-      analysis: item.analyses.map((a) => ({
+      analysis: analyses.map((a) => ({
         id: a.id,
         classification: a.classification,
         riskLevel: a.riskLevel,

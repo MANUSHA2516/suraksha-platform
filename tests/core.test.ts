@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { canAdvance, isFreshPosition, percent } from '../packages/shared/src';
-import { reportSchema, registerSchema } from '../packages/validation/src';
+import { reportSchema, registerSchema, loginSchema } from '../packages/validation/src';
 import { randomUUID } from 'node:crypto';
 describe('Workflow invariants', () => {
   it('does not skip or reverse investigation stages', () => {
@@ -41,4 +41,10 @@ describe('Workflow invariants', () => {
       }).success,
     ).toBe(false);
   });
+});
+
+it('accepts the staff remember-device preference but rejects injected login roles', () => {
+  const input = { login: 'SL-ADM-0192', password: 'Example123!', rememberDevice: true };
+  expect(loginSchema.safeParse(input).success).toBe(true);
+  expect(loginSchema.safeParse({ ...input, role: 'ADMIN' }).success).toBe(false);
 });

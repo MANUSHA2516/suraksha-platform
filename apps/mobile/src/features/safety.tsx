@@ -57,17 +57,34 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
       watch?.remove();
     };
   }, [id, shares.data?.length]);
-  useEffect(()=>{
-    if(id!=='M14'||!['ACTIVE','RESPONDING'].includes(alert.data?.status))return;
-    let active=true;let watcher:Location.LocationSubscription|undefined;
-    void Location.getForegroundPermissionsAsync().then(async permission=>{
-      if(!permission.granted||!active)return;
-      watcher=await Location.watchPositionAsync({accuracy:Location.Accuracy.Balanced,timeInterval:10000,distanceInterval:10},p=>{
-        if(active)void api('/location/events','POST',{sosId:route.params.id,latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy||0,capturedAt:new Date(p.timestamp).toISOString()}).catch(e=>setError(e instanceof Error?e.message:'Location update failed'));
-      });if(!active)watcher.remove();
-    }).catch(()=>setError('Live location is unavailable'));
-    return()=>{active=false;watcher?.remove();};
-  },[id,alert.data?.status,route.params?.id]);
+  useEffect(() => {
+    if (id !== 'M14' || !['ACTIVE', 'RESPONDING'].includes(alert.data?.status)) return;
+    let active = true;
+    let watcher: Location.LocationSubscription | undefined;
+    void Location.getForegroundPermissionsAsync()
+      .then(async (permission) => {
+        if (!permission.granted || !active) return;
+        watcher = await Location.watchPositionAsync(
+          { accuracy: Location.Accuracy.Balanced, timeInterval: 10000, distanceInterval: 10 },
+          (p) => {
+            if (active)
+              void api('/location/events', 'POST', {
+                sosId: route.params.id,
+                latitude: p.coords.latitude,
+                longitude: p.coords.longitude,
+                accuracy: p.coords.accuracy || 0,
+                capturedAt: new Date(p.timestamp).toISOString(),
+              }).catch((e) => setError(e instanceof Error ? e.message : 'Location update failed'));
+          },
+        );
+        if (!active) watcher.remove();
+      })
+      .catch(() => setError('Live location is unavailable'));
+    return () => {
+      active = false;
+      watcher?.remove();
+    };
+  }, [id, alert.data?.status, route.params?.id]);
   if (id === 'M12')
     return (
       <Page

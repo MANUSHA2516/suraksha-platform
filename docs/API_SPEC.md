@@ -1,96 +1,159 @@
-# API specification — proposed contracts, not live endpoints
+# API specification — registered implementation
 
-The three DOCX files are the complete authoritative source set, confirmed by the user on 2026-09-08. Referenced diagrams are absent; use the documented textual relationships and screen workflows. This is a pre-implementation API design linked to available screens, not generated OpenAPI from running code.
+The NestJS API uses prefix `/v1`. All routes below require a verified current session unless explicitly public. `auth/auth.ts` supplies global authentication and role guards; services additionally enforce record ownership/assignment and consent. Route lists are extracted from decorators; exact request validators are in the linked implementation files and `packages/validation/src/index.ts`.
 
-## Common conventions
+## Transport and errors
 
-Proposed prefix `/v1`; JSON except multipart evidence uploads and authorized binary downloads. Authenticated principal comes from verified access token/session, never a client-supplied owner or role. Staff verification, account state, assignment, consent and jurisdiction checks are separate from token validity. All list endpoints require bounded pagination and allowlisted filters/sort fields. Timestamps use UTC ISO 8601; case references are stable `SL-<sequence>` strings.
+JSON requests except `POST /evidence` multipart and `/evidence/:id/content` binary downloads. Web sets `X-Suraksha-Client: web` for HttpOnly cookie sessions and sends credentials; mutating cookie requests require the configured Origin. Mobile uses `Authorization: Bearer <accessToken>`. Access lifetime is ten minutes; refresh credentials rotate atomically, are stored hashed, and expire in seven days. Replayed refresh credentials revoke their family. Web `rememberDevice` controls persistent refresh cookies.
 
-Error envelope: `{error:{code,message,requestId,fields?}}`. Codes: 400 validation, 401 authentication/expired session, 403 forbidden role, 404 missing or consistently concealed object, 409 stale version/duplicate booking/invalid transition, 413 oversized evidence, 429 rate limit, 503 unavailable provider. Never return stack traces, secrets or sensitive record contents in errors.
+Error envelope: `{ "error": { "code": 400, "message": "…", "requestId": "…", "fields": {} } }`. `code` is the numeric HTTP status; fields are optional. 400 validation, 401 missing/expired session, 403 forbidden role/record, 404 missing resource, 409 duplicate/stale transition, 413 upload size, 429 throttled, 500 unexpected failure, 503 AI unavailable. No stack or sensitive record is returned.
 
-Mutating critical workflows accept idempotency keys; case mutations require an expected version. Staff sessions should use secure HttpOnly cookies through a web server boundary with CSRF/Origin checks; mobile tokens require native secure storage. Refresh tokens rotate atomically, are hashed in storage, and support logout, family replay revocation and suspension. Exact transport code is not implemented.
+List responses are capped arrays, not complete cursor-paginated APIs (G23). Timestamps are ISO UTC. Report/SOS retry keys are client UUIDs; case mutations use `expectedVersion`. Create endpoints generally return 201, updates 200.
 
-## Authentication contracts
+## Core contracts
 
-- `POST /auth/register`: documented name/phone/NIC context, strong password, versioned consent and eligibility affirmation → USER account only; never accept a privileged role.
-- `POST /auth/login`: staff identifier/password or mobile identity plus authentication proof → short-lived access session and rotating refresh session. NIC/phone alone never suffices.
-- `POST /auth/refresh`: valid unrevoked refresh credential → replacement token pair; replay invalidates family.
-- `POST /auth/logout`: revoke current refresh family; clear cookies/native credentials.
-- `GET /auth/me`: current safe account projection and role destination.
-- `POST /auth/challenges`: optional possession verification provider with expiry/attempt limits, only if configured. Local challenge delivery must be clearly identified.
+- `POST /auth/register`: `{name,nic,phone,password,consent:true}`; creates USER only. A role field is rejected. No possession-verification provider is claimed.
+- `POST /auth/login`: `{login,password,rememberDevice?:boolean}`; login is NIC or staff identifier. Non-web responses include `{accessToken,refreshToken,user}`; web receives cookies and safe user data.
+- `POST /auth/refresh`: mobile `{refreshToken}` or web refresh cookie; returns rotated credentials. `POST /auth/logout` revokes current family. `GET /auth/me` returns safe user/session context.
+- `POST /reports`: `{category,occurredAt,description?,anonymous,evidenceIds?:string[],idempotencyKey}`; returns the shared case projection. Categories are CYBER_HARASSMENT, DOMESTIC_VIOLENCE, WORKPLACE_HARASSMENT, PUBLIC_TRANSPORT_ABUSE. Evidence must belong to the caller.
+- `POST /cases/:reference/assignment`: `{officerId,expectedVersion}`; Admin only, verified active officer. `PATCH /cases/:reference/status`: `{stage,notes,expectedVersion}`; assigned Police only, sequential FILED → UNDER_INVESTIGATION → SUSPECT_CONTACTED → RESOLVED.
+- `POST /evidence`: multipart `file`, `kind` (Photo/Audio/Video/Chat log/Analysis), optional `note`; maximum 25 MB. Returns metadata/digest, never object keys or public URLs. `POST /evidence/:id/unlock` accepts `{pin}`; sealed-owner download sends returned proof in `X-Unlock-Proof`.
+- `POST /sos`: `{idempotencyKey,locationState,location?}` where state is AVAILABLE/DENIED/UNAVAILABLE/STALE and position is `{latitude,longitude,accuracy,capturedAt}`. Response contains persisted alert/history/development delivery receipts, not dispatch confirmation.
+- `POST /analysis`: `{text,language?:'auto'|'en'|'si'|'ta'}`; calls authenticated FastAPI `/analyze` and stores encrypted text evidence plus versioned analysis. Demo confidence is null. `GET /analysis/:id` is owner-scoped.
+- `POST /legal/queries` creates a private informational query. Explicit escalation makes it claimable by an advisor; other advisors cannot read claimed conversations. Resource publication requires reviewed text and source URL, not a supplied title alone.
+- `POST /counseling/appointments`: `{slotId}`; unique future counselor slot. Notes/follow-up use `/counseling/sessions/:id/notes` with `{summary,cadence,cadenceNote?,risk,nextSlotId?}` and are assigned-counselor-only. Generic Admin access is forbidden.
+- `GET /events`: authenticated Server-Sent Events with minimal resource references. Clients refetch through ordinary policy-checked endpoints. Durable reconnect/backpressure is not implemented (G22).
 
-## Core request / response examples
+## Registered routes by controller
 
-`POST /reports` (USER): `{category, occurredAt, description?, anonymous, evidenceIds[], idempotencyKey}` → `{reference,status,createdAt,version}`. Derive owner from session, verify every evidence ID belongs to owner and is finalized, atomically create case/report/links/events/outbox. Never accept reporter identity from an unrelated request field.
+Paths here are relative to `/v1`. For record-level policy details see ROLE_PERMISSION_MATRIX.md. Public registration, login and refresh are the only unauthenticated NestJS endpoints.
 
-`POST /cases/:reference/assignment` (ADMIN): `{officerId,expectedVersion}` → safe case projection. Officer must be active and verified; assignment is auditable. No new case is created.
+### `services/api/src/auth/auth.ts`
 
-`PATCH /cases/:reference/status` (assigned POLICE): `{stage,notes,expectedVersion}` → same `{reference,status,version}`. Enforce lifecycle; separate private investigation notes from the user's public timeline.
+| Method | Path |
+|---|---|
+| POST | /auth/register |
+| POST | /auth/login |
+| POST | /auth/refresh |
+| GET | /auth/me |
+| POST | /auth/logout |
 
-`POST /evidence` (USER): multipart `{file,type,note?,capturedAt?,location?}` → `{id,state,sha256,capturedAt,sealedAt?}` only after authenticated encrypted object save. Key material/object URLs are never returned. Content download authenticates ownership/assignment, reauth proof where required, decrypts/verifies and records access.
+### `services/api/src/core/me.ts`
 
-`POST /sos` (USER): `{idempotencyKey,location?:{latitude,longitude,accuracy,capturedAt},locationState}` → `{id,status,deliveryMode,deliveries[]}`. State describes actual provider acknowledgment. A development outbox receipt is never real dispatch confirmation.
+| Method | Path |
+|---|---|
+| GET | /me |
+| GET | /me/overview |
+| PATCH | /me/preferences |
+| POST | /me/security/pin |
+| POST | /me/security/unlock |
+| DELETE | /me |
 
-`POST /analysis` (USER): `{text,language:'auto'|'en'|'si'|'ta'}` → `{id,classification,riskLevel,confidence:null|number,modelVersion,validationStatus,explanationMetadata,evidenceId}`. `services/ai POST /analyze` is a service-to-service contract, not an unauthenticated bypass for user storage. Do not log raw message text or fabricate scores.
+### `services/api/src/cases/cases.ts`
 
-`POST /counseling/appointments` (USER): `{slotId,screeningConsentId?}` → appointment with pseudonymous client reference. Enforce unique reservation. `POST /counseling/sessions/:id/notes` (assigned COUNSELOR): `{summary,cadence,cadenceNote?,risk,nextSlotId?}` → note receipt plus follow-up appointment; both persist transactionally.
+| Method | Path |
+|---|---|
+| POST | /reports |
+| GET | /cases |
+| GET | /cases/:reference |
+| POST | /cases/:reference/assignment |
+| PATCH | /cases/:reference/status |
+| POST | /cases/:reference/actions |
+| GET | /cases/:reference/messages |
+| POST | /cases/:reference/messages |
 
-## Screen endpoint coverage
+### `services/api/src/evidence/evidence.ts`
 
-| Screen | Allowed role before record policy | Proposed endpoints | Record policy |
-|---|---|---|---|
-| M01 | USER | — | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M02 | USER | POST /auth/login; POST /auth/challenges | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M03 | USER | PATCH /me/preferences | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M04 | USER | — | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M05 | USER | — | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M06 | USER | — | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M07 | USER | POST /auth/register | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M08 | USER | POST /me/security/pin | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M09 | USER | PATCH /me/preferences | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M10 | USER | POST /me/security/unlock | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M11 | USER | GET /me; PATCH /me/preferences; DELETE /me | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M12 | USER | GET /me/overview | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M13 | USER | POST /sos | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M14 | USER | GET /sos/:id; PATCH /sos/:id/status | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M15 | USER | GET /contacts; POST /contacts; DELETE /contacts/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M16 | USER | POST /location/shares; DELETE /location/shares/:id; POST /location/events | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M17 | USER | POST /routes; GET /danger-zones | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M18 | USER | GET /evidence | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M19 | USER | POST /evidence | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M20 | USER | GET /evidence/:id; POST /evidence/:id/unlock; GET /evidence/:id/content | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M21 | USER | POST /analysis | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M22 | USER | GET /analysis/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M23 | USER | POST /legal/queries; GET /legal/queries/:id; POST /legal/queries/:id/messages; POST /legal/queries/:id/escalate | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M24 | USER | — | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M25 | USER | POST /reports; GET /evidence | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M26 | USER | GET /cases/:reference; GET /cases/:reference/messages; POST /cases/:reference/messages | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M27 | USER | GET /community/posts; POST /community/posts; POST /community/posts/:id/comments; POST /community/flags; PUT /community/posts/:id/like | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M28 | USER | GET /legal/resources; GET /legal/resources/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M29 | USER | POST /wellbeing/check-ins | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M30 | USER | GET /wellbeing/check-ins/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| M31 | USER | GET /counselors/availability; POST /counseling/appointments | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S01 | ADMIN | POST /auth/login | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S02 | ADMIN | GET /admin/overview; GET /admin/events | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S03 | ADMIN | GET /admin/users; POST /admin/users; PATCH /admin/users/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S04 | ADMIN | GET /admin/cases | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S05 | ADMIN | GET /cases/:reference; POST /cases/:reference/assignment; POST /cases/:reference/actions | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S06 | ADMIN | GET /admin/moderation; PATCH /admin/moderation/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S07 | ADMIN | GET /admin/models; GET /admin/model-events; POST /admin/model-events | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S08 | POLICE | POST /auth/login | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S09 | POLICE | GET /police/alerts; POST /sos/:id/respond | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S10 | POLICE | GET /cases/:reference; GET /evidence/:id/content; POST /cases/:reference/actions | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S11 | POLICE | PATCH /cases/:reference/status | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S12 | COUNSELOR | POST /auth/login | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S13 | COUNSELOR | GET /counseling/appointments; GET /counseling/messages | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S14 | COUNSELOR | GET /counseling/clients/:clientId; POST /counseling/sessions; POST /counseling/escalations | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S15 | COUNSELOR | POST /counseling/sessions/:id/notes | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
-| S16 | LEGAL_ADVISOR | GET /legal/queries; PATCH /legal/queries/:id; POST /legal/queries/:id/messages; POST /legal/resources; PATCH /legal/resources/:id | ROLE_PERMISSION_MATRIX.md; own/assigned records as applicable |
+| Method | Path |
+|---|---|
+| GET | /evidence |
+| POST | /evidence |
+| GET | /evidence/:id |
+| POST | /evidence/:id/unlock |
+| GET | /evidence/:id/content |
 
-## Realtime and provider interfaces
+### `services/api/src/safety/safety.ts`
 
-Proposed realtime events: `case.created`, `case.assigned`, `case.statusChanged`, `case.messageAdded`, `sos.created`, `sos.responded`, `sos.locationUpdated`, `sos.closed`, `notification.created`. Authenticate connection; authorize each subscription and each delivery against current owner/assignment/jurisdiction. No global sensitive broadcast. Events carry IDs/version plus minimal safe metadata; clients refetch authorized projections. Reconnect resumes from durable event cursors.
+| Method | Path |
+|---|---|
+| GET | /contacts |
+| POST | /contacts |
+| DELETE | /contacts/:id |
+| POST | /sos |
+| GET | /sos/:id |
+| PATCH | /sos/:id/status |
+| GET | /police/alerts |
+| POST | /sos/:id/respond |
+| GET | /location/shares |
+| POST | /location/shares |
+| DELETE | /location/shares/:id |
+| POST | /location/events |
+| GET | /danger-zones |
+| POST | /routes |
+| GET | /notifications |
+| PATCH | /notifications/:id |
+| GET (SSE) | /events |
 
-Provider boundaries: encrypted EvidenceObjectStore (S3/MinIO), EmergencyDeliveryProvider, PushProvider, Location/RouteProvider, OCRProvider, AnalyzerProvider, LegalRetriever, StaffSSOProvider, ClinicalSessionProvider. Local implementations explicitly return development provenance; absent live providers return unavailable, never success-shaped mock responses.
+### `services/api/src/support/analysis.ts`
 
-Full OpenAPI schemas, pagination cursors, rate-limit values, payload size limits and every concrete endpoint authorization test remain implementation work.
+| Method | Path |
+|---|---|
+| POST | /analysis |
+| GET | /analysis/:id |
+
+### `services/api/src/support/legal.ts`
+
+| Method | Path |
+|---|---|
+| GET | /legal/queries |
+| POST | /legal/queries |
+| GET | /legal/queries/:id |
+| POST | /legal/queries/:id/escalate |
+| PATCH | /legal/queries/:id |
+| POST | /legal/queries/:id/messages |
+| GET | /legal/resources |
+| GET | /legal/resources/:id |
+| POST | /legal/resources |
+| PATCH | /legal/resources/:id |
+
+### `services/api/src/support/counseling.ts`
+
+| Method | Path |
+|---|---|
+| POST | /wellbeing/check-ins |
+| GET | /wellbeing/check-ins/:id |
+| PATCH | /wellbeing/check-ins/:id |
+| GET | /counselors/availability |
+| POST | /counseling/appointments |
+| GET | /counseling/appointments |
+| GET | /counseling/clients/:id |
+| POST | /counseling/sessions/:id/start |
+| POST | /counseling/sessions/:id/notes |
+| POST | /counseling/sessions/:id/escalate |
+| GET | /counseling/sessions/:id/messages |
+| POST | /counseling/sessions/:id/messages |
+
+### `services/api/src/community/community.ts`
+
+| Method | Path |
+|---|---|
+| GET | /community/posts |
+| POST | /community/posts |
+| POST | /community/posts/:id/comments |
+| PUT | /community/posts/:id/like |
+| POST | /community/flags |
+| GET | /admin/moderation |
+| PATCH | /admin/moderation/:id |
+
+### `services/api/src/admin/admin.ts`
+
+| Method | Path |
+|---|---|
+| GET | /admin/overview |
+| GET | /admin/users |
+| POST | /admin/users |
+| PATCH | /admin/users/:id |
+| GET | /admin/models |
+| POST | /admin/model-events |
+
+FastAPI separately exposes `GET /health` and `POST /analyze`; analysis requires the service bearer token. Its development model is not an externally evaluated classifier. No `/auth/challenges`, standalone `/admin/cases`, OCR or external dispatch endpoint is claimed.

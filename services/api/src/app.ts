@@ -1,4 +1,9 @@
-import { EmergencyDeliveryProvider,DevelopmentEmergencyDelivery,SafeRouteProvider,DevelopmentSafeRoute } from './safety/providers';
+import {
+  EmergencyDeliveryProvider,
+  DevelopmentEmergencyDelivery,
+  SafeRouteProvider,
+  DevelopmentSafeRoute,
+} from './safety/providers';
 import './core/env';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -41,8 +46,8 @@ import { required } from './core/env';
     CaseService,
     EvidenceService,
     ObjectStore,
-    {provide:EmergencyDeliveryProvider,useClass:DevelopmentEmergencyDelivery},
-    {provide:SafeRouteProvider,useClass:DevelopmentSafeRoute},
+    { provide: EmergencyDeliveryProvider, useClass: DevelopmentEmergencyDelivery },
+    { provide: SafeRouteProvider, useClass: DevelopmentSafeRoute },
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],

@@ -425,9 +425,11 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
         <Button
           title={t('Set disguise \u276F')}
           onPress={async () => {
-            const native = await disguiseProvider.set(disguise as 'calculator'|'notes'|'weather');
-              const u = await api('/me/preferences', 'PATCH', { disguise });
-              if(!native.launcherChanged)Alert.alert('Disguise',native.notice);
+            const native = await disguiseProvider.set(
+              disguise as 'calculator' | 'notes' | 'weather',
+            );
+            const u = await api('/me/preferences', 'PATCH', { disguise });
+            if (!native.launcherChanged) Alert.alert('Disguise', native.notice);
             session.setUser(u);
             n.navigate('M15');
           }}
@@ -483,7 +485,13 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
             accessibilityLabel={t('Notifications')}
             value={session.user?.notificationsEnabled}
             onValueChange={async (notificationsEnabled) =>
-              session.setUser(await api('/me/preferences', 'PATCH', { notificationsEnabled:notificationsEnabled?await deviceNotifications.requestPermission():false }))
+              session.setUser(
+                await api('/me/preferences', 'PATCH', {
+                  notificationsEnabled: notificationsEnabled
+                    ? await deviceNotifications.requestPermission()
+                    : false,
+                }),
+              )
             }
           />
         </View>

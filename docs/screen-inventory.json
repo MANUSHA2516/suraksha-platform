@@ -15,7 +15,14 @@
     "purpose": "This is the splash screen shown the moment the application icon is opened for the very first time, before onboarding begins. It presents the Suraksha shield-and-checkmark mark together with the app name in a calm, reassuring layout, establishing the platform's protective identity before any personal data is requested. A three-dot progress indicator at the bottom hints that a short guided setup follows.",
     "components": "Introduces the Suraksha brand and its protective purpose\nSignals that a short, guided setup flow follows\nSingle \"Get Started\" action moves the user into onboarding",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image1.png",
-    "component": "apps/mobile/src/screens/M01.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M01 (/welcome is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M02",
@@ -25,15 +32,22 @@
     "role": "USER",
     "platform": "mobile",
     "route": "/auth",
-    "api": "POST /auth/login; POST /auth/challenges",
-    "entities": "User, AuthChallenge, RefreshSession",
+    "api": "POST /auth/login",
+    "entities": "User, RefreshSession",
     "inputs": "NIC, phone, possession proof or password (conflict C03)",
     "outputs": "Authenticated session or registration handoff",
     "test": "authentication",
     "purpose": "This is the authentication gateway. A segmented control lets the user switch between \"Log In\" and \"Register\", and — unlike a conventional email/password form — identity is established using the user's National Identity Card (NIC) number together with their phone number. This mirrors the identity-verification model used elsewhere in the platform, since the same NIC identity is later checked by an Administrator when verifying professional and community accounts. Trust badges for SOS, Encryption and Verification are pinned to the bottom of the screen, reassuring the user of the platform's safety posture at the very first sensitive input.",
     "components": "NIC number + phone number used as the login/registration identifier\nOne-tap toggle between Log In and Register\nPersistent SOS / Encrypted / Verified trust indicators\n\"Register with your NIC in one step\" shortcut for new users",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image2.png",
-    "component": "apps/mobile/src/screens/M02.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M02 (/auth is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M03",
@@ -44,14 +58,21 @@
     "platform": "mobile",
     "route": "/onboarding/language",
     "api": "PATCH /me/preferences",
-    "entities": "UserPreference",
+    "entities": "User",
     "inputs": "en / si / ta",
     "outputs": "Saved locale; English fallback if translation missing",
     "test": "locale-preferences",
     "purpose": "Presented as part of the onboarding wizard, this screen lets the user pick the interface language from Sinhala, Tamil, and English. Placing language choice this early ensures that every subsequent safety and legal-aid screen is accessible to users from Sri Lanka's three main language communities, directly supporting the trilingual requirement identified as a gap in existing local safety apps. A progress stepper across the top tracks the user's position in the onboarding flow, and the SOS/Encrypted/Verified trust row reappears at the bottom.",
     "components": "Selects interface language (Sinhala / Tamil / English)\nSets the language used for all later legal, AI-detection, and support content\nChangeable later at any time from Settings",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image3.png",
-    "component": "apps/mobile/src/screens/M03.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Verified Sinhala/Tamil translations are unavailable; selected locale uses explicit English fallback (G04).",
+    "navigation": "React Navigation M03 (/onboarding/language is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M04",
@@ -69,7 +90,14 @@
     "purpose": "The first of three feature-highlight cards shown after language selection, introducing the SOS mechanism before the user ever needs it. It explains in one sentence that a single trigger sends the user's live location to trusted contacts and the nearest verified responder, so that when a real emergency later occurs the behaviour of the SOS button is already familiar rather than something to be learned under stress.",
     "components": "Previews the SOS / emergency-alert capability\nSets expectations: one action, live location shared, trusted contacts + responder notified\nSkippable — a \"Skip\" link is provided for returning or impatient users",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image4.png",
-    "component": "apps/mobile/src/screens/M04.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M04 (/onboarding/sos is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M05",
@@ -87,7 +115,14 @@
     "purpose": "The second onboarding highlight introduces the Evidence Vault concept ahead of first use. It tells the user that screenshots, audio, and location data can be stored safely, hidden from anyone else who uses the same phone, previewing the encrypted, tamper-evident storage that underpins later evidence-collection and legal-reporting screens.",
     "components": "Previews encrypted evidence storage (screenshots, audio, location)\nReassures the user that vault contents remain hidden from other phone users\nPrepares the user for the disguise/PIN mechanism introduced next",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image5.png",
-    "component": "apps/mobile/src/screens/M05.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M05 (/onboarding/evidence is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M06",
@@ -105,7 +140,14 @@
     "purpose": "The third and final onboarding highlight introduces the human side of the platform: a always-available, verified responder network standing behind the automated features. It closes the feature-preview carousel and hands the user off to account creation with a \"Get Started\" action.",
     "components": "Previews the 24/7 verified-responder network behind SOS and reporting\nFinal step of the feature-highlight carousel before registration",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image6.png",
-    "component": "apps/mobile/src/screens/M06.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M06 (/onboarding/responders is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M07",
@@ -123,7 +165,14 @@
     "purpose": "This is the registration form, collecting the minimum information needed to create an account: full name, mobile number, and a password (with an inline password-strength requirement of at least 8 characters, a number, and a symbol). A mandatory checkbox confirms agreement to the Terms and Privacy Policy and that the user is 16 or older. A progress stepper shows this as one step within account setup, and a \"Sign in\" link is offered for anyone who already has an account and reached this screen by mistake.",
     "components": "Captures full name, mobile number, and password\nEnforces password-strength and age/consent requirements before account creation\nLinks back to Sign In for existing users",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image7.png",
-    "component": "apps/mobile/src/screens/M07.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M07 (/register is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M08",
@@ -134,14 +183,21 @@
     "platform": "mobile",
     "route": "/security/pin",
     "api": "POST /me/security/pin",
-    "entities": "UserSecurity, AuditLog",
+    "entities": "User, AuditLog",
     "inputs": "6-digit PIN and confirmation; biometric preference",
     "outputs": "PIN configured; native biometric capability result",
     "test": "app-lock",
     "purpose": "Immediately after account creation, the user is required to set the 6-digit PIN that will later unlock the disguised app (see Figure 2 / Guardian Mode, below). A numeric keypad is used to enter and confirm the PIN, and a toggle is provided to additionally enable fingerprint unlock for a faster, equally private alternative. This step operationalises the \"encrypted and disguise-protected\" promise made during onboarding before the user leaves the setup flow.",
     "components": "Sets the 6-digit PIN used to unlock Guardian Mode from the disguise\nOptional fingerprint unlock toggle\nChangeable later from Settings → App lock & disguise mode",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image8.png",
-    "component": "apps/mobile/src/screens/M08.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M08 (/security/pin is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M09",
@@ -152,14 +208,21 @@
     "platform": "mobile",
     "route": "/security/disguise",
     "api": "PATCH /me/preferences",
-    "entities": "UserPreference",
+    "entities": "User",
     "inputs": "Calculator / Notes / Weather",
     "outputs": "Disguise selection persisted",
     "test": "disguise",
     "purpose": "As the final configuration step before the app is first used, the user selects which everyday application Suraksha should imitate on the home screen and app icon — the options implemented are Calculator, Notes, and Weather. This is central to the survivor-safety model of the application: it allows the tool to remain hidden from an abuser who inspects the victim's phone, while remaining only one correct PIN entry away from full functionality. The choice can be changed later at any time from Settings.",
     "components": "Selects the disguise identity: Calculator, Notes, or Weather\nDetermines the home-screen icon and the app's default, harmless-looking appearance\nReversible at any time from Settings",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image9.png",
-    "component": "apps/mobile/src/screens/M09.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Internal disguise works and Android launcher module exists; iOS alternate assets and device validation remain (G10).",
+    "navigation": "React Navigation M09 (/security/disguise is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M10",
@@ -170,14 +233,21 @@
     "platform": "mobile",
     "route": "/security/unlock",
     "api": "POST /me/security/unlock",
-    "entities": "UserSecurity, AuditLog",
+    "entities": "User, AuditLog",
     "inputs": "PIN or supported device biometric",
     "outputs": "Guardian unlock or fallback utility",
     "test": "app-lock",
     "purpose": "This screen demonstrates the application's core safety mechanism in daily use: by default the app is disguised as an ordinary utility (calculator, notes, or weather, per the user's choice), and entering the private PIN set up earlier lifts the disguise and switches the device into \"Guardian mode,\" unlocking the real Suraksha application. A segmented PIN-progress indicator and a clear \"Continue to Suraksha\" action are provided, along with a \"Back to calculator\" fallback link, so the disguise can be re-engaged instantly if someone else picks up the device.",
     "components": "PIN entry gate that lifts the disguise and reveals the real application\nInstant fallback back to the disguised utility if interrupted\nThe single mechanism separating an abuser's casual inspection from the survivor's private tools",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image10.png",
-    "component": "apps/mobile/src/screens/M10.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M10 (/security/unlock is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M11",
@@ -188,14 +258,21 @@
     "platform": "mobile",
     "route": "/settings",
     "api": "GET /me; PATCH /me/preferences; DELETE /me",
-    "entities": "User, UserPreference, DeletionJob, AuditLog",
+    "entities": "User, DeletionJob, AuditLog",
     "inputs": "Language, lock, sharing, notifications, explicit erase confirmation",
     "outputs": "Updated preferences or deletion progress",
     "test": "account-deletion",
     "purpose": "The Settings screen consolidates all safety-critical configuration in one place: interface language, the app-lock/disguise mode (PIN and fingerprint), default location-sharing behaviour, notification preferences, and information about the current app version. A clearly separated, high-friction \"Delete my data\" action — protected behind an explicit confirmation dialog warning that the action permanently erases the account, vault contents, and messages and cannot be undone — gives the user full, unambiguous control to walk away from the platform entirely at any time.",
     "components": "Central hub for language, app-lock/disguise, location-sharing, and notification settings\nDisplays current app version under \"About Suraksha\"\nIrreversible, confirmation-gated full account and data deletion",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image11.png",
-    "component": "apps/mobile/src/screens/M11.tsx"
+    "component": "apps/mobile/src/features/onboarding.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Active account/object deletion exists; backup, legal-hold retention and verified recovery semantics remain unresolved (G12).",
+    "navigation": "React Navigation M11 (/settings is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M12",
@@ -213,7 +290,14 @@
     "purpose": "Once unlocked, the user lands on a personalised home dashboard (\"Good evening, Risini — Here's your safety overview\") that summarises the account's safety status at a glance. Quick-access tiles are provided for the SOS Emergency trigger, the Evidence Vault (showing item count), the AI-powered Ask Legal Aid chat, a mental-health Check-in, and Jobs/opportunities, with a bottom navigation bar (Home, Knowledge, SOS, Vault, Profile) giving persistent access to every major functional area of the app.",
     "components": "Personalised greeting and at-a-glance safety-status overview\nOne-tap quick-access tiles: SOS Emergency, Evidence Vault, Ask Legal Aid, Check-in, Jobs\nPersistent bottom navigation across the app's major sections",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image12.png",
-    "component": "apps/mobile/src/screens/M12.tsx"
+    "component": "apps/mobile/src/features/safety.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M12 (/home is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M13",
@@ -231,7 +315,15 @@
     "purpose": "The SOS screen implements a deliberate \"hold-to-alert\" pattern (hold for 2 seconds) to minimise accidental triggering while still allowing a fast, low-visibility response in a genuine emergency. Activating the button immediately alerts the user's trusted contacts and the nearest police unit and shares the user's live location, with a visible \"Cancel\" option retained in case the alert was triggered by mistake.",
     "components": "2-second press-and-hold gesture prevents accidental triggering\nSimultaneously notifies trusted contacts and the nearest police unit with live location\nCancel option available up to the point of confirmed dispatch",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image13.png",
-    "component": "apps/mobile/src/screens/M13.tsx"
+    "component": "apps/mobile/src/features/safety.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Durable SOS and hold activation work; emergency delivery uses an explicit development provider (G08).",
+    "navigation": "React Navigation M13 (/sos is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M14",
@@ -249,7 +341,15 @@
     "purpose": "Following a successful SOS trigger, this confirmation screen shows live tracking status on a map, confirms that the nearest police unit has been notified (with distance shown, e.g. 1.2 km away), and lists which trusted contacts have been alerted. A prominent \"I am safe now\" button lets the user stand the alert down once the situation has been resolved, closing the loop for the responding parties.",
     "components": "Live map showing the user's position and the responding police unit\nConfirms which police unit and which trusted contacts have been notified\n\"I am safe now\" action to stand down an active alert",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image14.png",
-    "component": "apps/mobile/src/screens/M14.tsx"
+    "component": "apps/mobile/src/features/safety.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Foreground positions and alert lifecycle work; external responder dispatch/ETA is unavailable (G08).",
+    "navigation": "React Navigation M14 (/sos/:id is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M15",
@@ -267,7 +367,15 @@
     "purpose": "As part of onboarding (and revisitable at any time), the user builds a list of trusted contacts who will be notified first during an SOS event, before or alongside police involvement, giving the user a softer first line of support. Each contact shows their relationship to the user (e.g. \"Amma\", \"Friend\") and phone number, with priority contacts flagged, and additional contacts can be added at any time from Settings.",
     "components": "Add / remove trusted contacts with name, relationship, and phone number\nFlags priority contacts notified first during an SOS event\nExtensible later from Settings without repeating onboarding",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image15.png",
-    "component": "apps/mobile/src/screens/M15.tsx"
+    "component": "apps/mobile/src/features/safety.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M15 (/contacts is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M16",
@@ -285,7 +393,15 @@
     "purpose": "This screen allows the user to share their real-time location with a specific trusted contact (\"Share with Amma\") for a defined duration (shown here as 2 hours), visualised on a live map. A single toggle enables or disables sharing, and a \"Stop sharing\" action is always available, balancing safety benefits with the user's control over their own privacy.",
     "components": "Live-location sharing with a named trusted contact\nTime-boxed sharing window (e.g. 2 hours) rather than indefinite tracking\nToggle on/off and an always-available \"Stop sharing\" override",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image16.png",
-    "component": "apps/mobile/src/screens/M16.tsx"
+    "component": "apps/mobile/src/features/safety.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Consented expiring shares and foreground positions persist; recipient delivery and background tracking remain (G08/G09).",
+    "navigation": "React Navigation M16 (/location/share is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M17",
@@ -296,14 +412,22 @@
     "platform": "mobile",
     "route": "/location/route",
     "api": "POST /routes; GET /danger-zones",
-    "entities": "DangerZone, RouteSession, LocationEvent",
+    "entities": "DangerZone, LocationEvent",
     "inputs": "Origin, destination, GPS permission, Start navigation",
     "outputs": "Provider route and community warnings with provenance",
     "test": "route-provider",
     "purpose": "The Safe Route feature calculates a walking route home while actively avoiding areas that have been reported as danger zones by other users, and flags any low-lit stretches ahead (\"Low-lit stretch ahead — reported by 6 users this month\"). Colour-coded route segments distinguish the safe path from danger zones, and a \"Start safe navigation\" action begins live, geo-fenced guidance with automatic alerts if the user deviates into a flagged area.",
     "components": "Routes around community-reported danger zones rather than shortest-path only\nSurfaces crowd-sourced warnings (e.g. poor lighting) along the route\nLive, geo-fenced navigation with deviation alerts once started",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image17.png",
-    "component": "apps/mobile/src/screens/M17.tsx"
+    "component": "apps/mobile/src/features/safety.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Provider-backed illustrative coordinates only; validated routing, geofencing and low-light data are unavailable (G09).",
+    "navigation": "React Navigation M17 (/location/route is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M18",
@@ -314,14 +438,22 @@
     "platform": "mobile",
     "route": "/vault",
     "api": "GET /evidence",
-    "entities": "Evidence, EvidenceHash",
+    "entities": "Evidence",
     "inputs": "Add evidence / select item",
     "outputs": "Own encrypted evidence metadata",
     "test": "evidence-list-authorization",
     "purpose": "The Evidence Vault provides tamper-evident, encrypted storage for all evidence the user has collected, including screenshots, voice notes, and location trails, each timestamped, labelled with its type (Threat, Audio, GPS), and tagged with when it was added. A single \"Add evidence\" action lets the user grow this collection at any time, and the vault contents can later be attached directly to a formal report.",
     "components": "Encrypted, tamper-evident storage for screenshots, audio, and location trails\nPer-item timestamp, type tag, and recency label\nDirect attachment of stored items to a new report",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image18.png",
-    "component": "apps/mobile/src/screens/M18.tsx"
+    "component": "apps/mobile/src/features/evidence.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M18 (/vault is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M19",
@@ -332,14 +464,23 @@
     "platform": "mobile",
     "route": "/vault/add",
     "api": "POST /evidence",
-    "entities": "Evidence, EvidenceHash, AuditLog",
+    "entities": "Evidence, AuditLog",
     "inputs": "Photo / audio / video / chat log file; optional note",
     "outputs": "Encrypted object and integrity metadata",
     "test": "evidence-upload",
     "purpose": "This screen allows the user to capture or import new evidence in four formats — Photo, Audio, Video, or Chat log — together with an optional note describing what happened, when, and where. Once submitted, items are immediately \"Encrypted & saved\" to the vault, reinforcing the chain-of-custody requirements needed if the evidence is later used in a legal or police process.",
     "components": "Four capture/import types: Photo, Audio, Video, Chat log\nOptional free-text note for context (what/when/where)\nImmediate encryption on save to preserve chain-of-custody",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image19.png",
-    "component": "apps/mobile/src/screens/M19.tsx"
+    "component": "apps/mobile/src/features/evidence.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Four evidence formats can be imported or a text note entered; in-app camera/microphone recording remains (G19).",
+    "navigation": "React Navigation M19 (/vault/add is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts",
+      "tests/providers.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M20",
@@ -350,14 +491,23 @@
     "platform": "mobile",
     "route": "/vault/:id",
     "api": "GET /evidence/:id; POST /evidence/:id/unlock; GET /evidence/:id/content",
-    "entities": "Evidence, EvidenceHash, EvidenceAccess",
+    "entities": "Evidence, EvidenceAccess",
     "inputs": "PIN unlock; attach to report",
     "outputs": "Authorized preview, capture metadata and verified hash",
     "test": "evidence-authorization",
     "purpose": "Once an item (here, Screenshot_0231) has been attached to a report, it becomes a locked, sealed evidence record: the raw content is hidden behind an encrypted preview that can only be unlocked with the user's PIN, while its capture time, location tag, and SHA-256 integrity hash remain visible and verified. This design preserves evidentiary integrity while still allowing the user to attach the sealed item to an active report.",
     "components": "PIN-gated encrypted preview once an item is sealed to a case\nVisible, verified capture time, location tag, and SHA-256 integrity hash\n\"Attach to report\" action without ever exposing the raw file unnecessarily",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image20.png",
-    "component": "apps/mobile/src/screens/M20.tsx"
+    "component": "apps/mobile/src/features/evidence.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "PIN-gated verified metadata, text/image preview and attachment work; audio/video playback remains (G19).",
+    "navigation": "React Navigation M20 (/vault/:id is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts",
+      "tests/providers.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M21",
@@ -375,7 +525,16 @@
     "purpose": "This screen lets the user upload a screenshot or paste the text of a message they have received, which is then analysed by the platform's AI harassment-detection model (supporting Sinhala, Tamil, and English). In the implemented example, the model flags \"Harassment detected — threatening language pattern\" with an 87% confidence score, and offers the user the option to Dismiss the flag or Escalate to Legal Aid directly from the result.",
     "components": "Upload screenshot or paste raw text for AI harassment analysis\nTrilingual detection model (Sinhala / Tamil / English)\nConfidence-scored flag with Dismiss or Escalate-to-Legal-Aid actions",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image21.png",
-    "component": "apps/mobile/src/screens/M21.tsx"
+    "component": "apps/mobile/src/features/evidence.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Text analysis calls the real FastAPI demo service; screenshot OCR and trained models are unavailable (G05/G19).",
+    "navigation": "React Navigation M21 (/scan is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts",
+      "tests/providers.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M22",
@@ -393,7 +552,16 @@
     "purpose": "Following a scan, this screen presents the full AI risk classification for the submitted message — in this case a High-risk / Threat + Blackmail classification at 92% model confidence, with a plain-language note that the language matches known coercion patterns. The result is saved automatically to the user's encrypted evidence vault and filed, and a direct \"Talk to Legal Chatbot\" action is provided, along with a short explanation of what happens next (evidence encrypted, available in the vault, legal aid notified only if the user chooses to file a report).",
     "components": "Full risk classification with confidence score and plain-language rationale\nAutomatic save-to-vault and filing of the analysed message\nOne-tap handoff into the Legal Aid chatbot",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image22.png",
-    "component": "apps/mobile/src/screens/M22.tsx"
+    "component": "apps/mobile/src/features/evidence.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Real stored analysis and vault linkage; confidence and validated threat score are intentionally unavailable (G05).",
+    "navigation": "React Navigation M22 (/scan/:id is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts",
+      "tests/providers.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M23",
@@ -404,14 +572,22 @@
     "platform": "mobile",
     "route": "/legal/chat",
     "api": "POST /legal/queries; GET /legal/queries/:id; POST /legal/queries/:id/messages; POST /legal/queries/:id/escalate",
-    "entities": "LegalQuery, LegalMessage, KnowledgeBase",
+    "entities": "LegalQuery, LegalMessage, LegalResource",
     "inputs": "Question, human escalation consent",
     "outputs": "Sourced informational response or human query queue",
     "test": "legal-query-flow",
     "purpose": "The AI Legal Aid Chat gives the user instant, conversational access to plain-language legal information (for example, an explanation of the Computer Crimes Act No. 24 of 2007 in response to a question about online blackmail) and can guide the user step-by-step through filing a formal report or connecting them directly with a human legal advisor. The chat is marked confidential and available 24/7, reducing the barrier to seeking legal guidance immediately after an incident.",
     "components": "Conversational, plain-language answers to legal questions\nGuides the user directly into the report-filing flow on request\nMarked confidential and available 24/7",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image23.png",
-    "component": "apps/mobile/src/screens/M23.tsx"
+    "component": "apps/mobile/src/features/reporting.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Persistent query/chat, consent and advisor fallback work; source-grounded automated answers await a legal corpus (G07).",
+    "navigation": "React Navigation M23 (/legal/chat is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M24",
@@ -429,7 +605,15 @@
     "purpose": "This is Step 1 of the reporting workflow, where the user selects the category that best matches their situation from options such as Cyber Harassment, Domestic Violence, Workplace Harassment, and Public Transport Abuse. Categorising the incident at the outset allows the system to route the report to the correct downstream workflow and to pre-fill relevant legal guidance later in the process.",
     "components": "Category selection: Cyber Harassment, Domestic Violence, Workplace Harassment, Public Transport Abuse\nDetermines downstream routing and applicable legal guidance\nFirst of a 3-step report-filing wizard",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image24.png",
-    "component": "apps/mobile/src/screens/M24.tsx"
+    "component": "apps/mobile/src/features/reporting.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M24 (/reports/new/category is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M25",
@@ -447,7 +631,15 @@
     "purpose": "As Step 2 of the reporting workflow, the report form collects structured details of the incident — when it happened, supporting evidence pulled directly from the Evidence Vault (\"2 items from Vault selected\"), and an optional free-text description — while a \"Submit anonymously\" toggle lets the user choose whether to hide their identity from anyone but the assigned case handler. This balances the need for actionable detail with the user's right to control their own exposure.",
     "components": "Structured incident details: date, linked vault evidence, free-text description\n\"Submit anonymously\" toggle to hide identity from all but the case handler\nDirect evidence attachment from the Vault rather than re-uploading",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image25.png",
-    "component": "apps/mobile/src/screens/M25.tsx"
+    "component": "apps/mobile/src/features/reporting.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M25 (/reports/new/details is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M26",
@@ -465,7 +657,15 @@
     "purpose": "Once submitted, the user can follow their case's progress through a simple status tracker — Received, Under review (shown here as assigned to the Cyber Crime unit), and Awaiting update, with an estimated turnaround time — matching the same case reference number used across the Admin and Police dashboards elsewhere in the platform. A \"Message case officer\" action keeps a direct communication channel open, and the screen reiterates that the case is encrypted and tied to the same #SL-2291 identifier used across the whole system.",
     "components": "Step-based status tracker: Received → Under review → Awaiting update\nShared case reference number (#SL-2291) traceable across Police/Admin views\nDirect \"Message case officer\" communication channel",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image26.png",
-    "component": "apps/mobile/src/screens/M26.tsx"
+    "component": "apps/mobile/src/features/reporting.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M26 (/reports/:reference is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M27",
@@ -483,7 +683,15 @@
     "purpose": "The Community screen is a moderated space where users can anonymously share their experiences and receive peer support, with each post showing relative time and comment count (e.g. \"Finally reported after 6 months, feeling lighter today\"). Every post passes through the AI content-moderation pipeline before being visible to other users, ensuring the space remains safe and constructive rather than a vector for further harassment.",
     "components": "Anonymous posting and peer-support commenting\nLike/comment counts surfaced per post\nAll content passes AI moderation before publication",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image27.png",
-    "component": "apps/mobile/src/screens/M27.tsx"
+    "component": "apps/mobile/src/features/reporting.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M27 (/community is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M28",
@@ -494,14 +702,22 @@
     "platform": "mobile",
     "route": "/knowledge",
     "api": "GET /legal/resources; GET /legal/resources/:id",
-    "entities": "LegalResource, LegalResourceTranslation, KnowledgeBase",
+    "entities": "LegalResource",
     "inputs": "Search, guide selection, locale",
     "outputs": "Published curated guide with source and reading time",
     "test": "legal-resource-publication",
     "purpose": "This screen provides a searchable library of plain-language legal guides covering topics such as the Cyber Crimes Act, the Domestic Violence Act, workplace protections, and how to file a police complaint. Each guide displays an estimated reading time (typically 4–8 minutes) and is available in all three supported languages, supporting informed decision-making independently of the AI chat.",
     "components": "Searchable library of plain-language legal guides\nPer-guide estimated reading time\nAvailable in Sinhala, Tamil, and English",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image28.png",
-    "component": "apps/mobile/src/screens/M28.tsx"
+    "component": "apps/mobile/src/features/reporting.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Reviewed-resource publication/search exists; seeded titles are unpublished drafts without legal text (G07).",
+    "navigation": "React Navigation M28 (/knowledge is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M29",
@@ -512,14 +728,22 @@
     "platform": "mobile",
     "route": "/wellbeing/check-in",
     "api": "POST /wellbeing/check-ins",
-    "entities": "WellbeingCheckIn, ScreeningInstrument",
+    "entities": "WellbeingCheckIn",
     "inputs": "Documented question responses; instrument incomplete",
     "outputs": "Private non-diagnostic check-in; no invented validated score",
     "test": "wellbeing-privacy",
     "purpose": "Implemented as a short, GAD-7-style screening questionnaire, this screen periodically checks in on the user's emotional wellbeing through simple, non-clinical questions such as feeling tense or on edge in the past week. A progress indicator (Question 3 of 9) and reassurance text keep the tone supportive rather than clinical, and results remain private throughout.",
     "components": "Short, validated-style (GAD-7-inspired) wellbeing screener\nQuestion-by-question progress indicator\nExplicitly framed as non-diagnostic and private",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image29.png",
-    "component": "apps/mobile/src/screens/M29.tsx"
+    "component": "apps/mobile/src/features/wellbeing.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Only the single documented check-in prompt is implemented; full validated instrument is not specified (G06).",
+    "navigation": "React Navigation M29 (/wellbeing/check-in is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M30",
@@ -529,15 +753,23 @@
     "role": "USER",
     "platform": "mobile",
     "route": "/wellbeing/results/:id",
-    "api": "GET /wellbeing/check-ins/:id",
-    "entities": "WellbeingCheckIn, ScreeningInstrument",
+    "api": "GET /wellbeing/check-ins/:id; PATCH /wellbeing/check-ins/:id",
+    "entities": "WellbeingCheckIn",
     "inputs": "View own result / Book a counselor",
     "outputs": "Private result, instrument provenance, booking handoff",
     "test": "wellbeing-privacy",
     "purpose": "On completion, the check-in produces a plain-language result — in this example, \"Mild anxiety\" with a score of 8/21 — along with a note that results are private and not shared without consent and that this is not a diagnosis. A direct \"Book a counselor\" call-to-action bridges the wellbeing check straight into professional support if the user chooses to proceed, with a suggested retake in 2 weeks.",
     "components": "Plain-language result and numeric score (e.g. 8/21) from the check-in\nExplicit \"not a diagnosis\", private, not-shared framing\nOne-tap bridge into booking a counselor",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image30.png",
-    "component": "apps/mobile/src/screens/M30.tsx"
+    "component": "apps/mobile/src/features/wellbeing.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Non-diagnostic response and sharing consent work; no unsupported clinical score is displayed (G06).",
+    "navigation": "React Navigation M30 (/wellbeing/results/:id is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "M31",
@@ -548,14 +780,22 @@
     "platform": "mobile",
     "route": "/counseling/book",
     "api": "GET /counselors/availability; POST /counseling/appointments",
-    "entities": "CounselorProfile, CounselorSlot, CounselingAppointment, Consent",
+    "entities": "StaffProfile, CounselorSlot, CounselingAppointment, Consent",
     "inputs": "Counselor, language, available slot; separate screening sharing consent",
     "outputs": "Confidential booking confirmation",
     "test": "counselor-booking",
     "purpose": "This screen lets the user choose from a list of available counselors, each showing their specialisation, language, and next available slot (e.g. a clinical counsellor available today at 4pm, a trauma-informed counsellor tomorrow, a family counsellor on Friday), and confirm a booking with a single tap. The session is explicitly marked as confidential and free of charge, removing two common barriers — cost and privacy concerns — to seeking professional help.",
     "components": "Browse counselors by specialisation, language, and next available slot\nOne-tap booking confirmation\nExplicitly confidential and free of charge",
     "image": "sources/Suraksha_UI_Screens_user NEW RESULT/image31.png",
-    "component": "apps/mobile/src/screens/M31.tsx"
+    "component": "apps/mobile/src/features/wellbeing.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "React Navigation M31 (/counseling/book is the source navigation label)",
+    "testRefs": [
+      "apps/mobile/test/flows.test.tsx",
+      "tests/integration.test.ts"
+    ],
+    "testScope": "Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control."
   },
   {
     "id": "S01",
@@ -573,7 +813,14 @@
     "purpose": "Restricted staff login screen for authorized response and field staff of the Suraksha safety network. Presented as a split panel: a branded trust panel on the left (\"Protecting staff & communities, together\") and the credential form on the right.",
     "components": "Staff ID field (e.g. SL-ADM-0192) and Password field\n\"Remember this device\" checkbox and \"Forgot access code?\" link\nPrimary Sign In button\nAlternate authentication: \"Sign in with Police ID SSO\"\nTrust indicators: 256-bit end-to-end encryption, SL Police verified, ISO 27001",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image1.png",
-    "component": "apps/web/src/features/S01.tsx"
+    "component": "apps/web/src/features/sign-in.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/admin/sign-in",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S02",
@@ -583,7 +830,7 @@
     "role": "ADMIN",
     "platform": "web",
     "route": "/admin",
-    "api": "GET /admin/overview; GET /admin/events",
+    "api": "GET /admin/overview; GET /events",
     "entities": "Case, SOSAlert, User, AuditLog",
     "inputs": "Search / incident selection",
     "outputs": "Calculated counters, weekly chart, sanitized live feed",
@@ -591,7 +838,14 @@
     "purpose": "The administrator's landing page, giving a single-glance summary of platform-wide health and activity.",
     "components": "Key metrics: Total active users (18,402), Open reports (37), SOS events today (4), Staff/AI accuracy (94%)\nWeekly Activity trend chart (SOS and report volume over the week)\nLive Feed — a real-time stream of platform events (SOS triggered, check-in confirmed, escort request closed, staff verified, report flagged)\nRecent Incidents table — case ID, type, location, assigned officer, status, and elapsed time\nLeft navigation: Dashboard, Reports, Users, Settings",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image2.png",
-    "component": "apps/web/src/features/S02.tsx"
+    "component": "apps/web/src/features/admin.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/admin",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S03",
@@ -609,7 +863,14 @@
     "purpose": "Central registry listing every account on the platform, with tools to verify, filter, and moderate accounts.",
     "components": "Counters: Total users (18,402), Verified (17,190), Pending review (148), Suspended (12)\nFilter tabs: All users / Women (Verified) / Police / Counselors / Pending\nTable columns: user name/ID, role detail, verification status, account status, view/edit actions\n\"Add User\" action for manually provisioning staff accounts",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image3.png",
-    "component": "apps/web/src/features/S03.tsx"
+    "component": "apps/web/src/features/admin.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/admin/users",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S04",
@@ -619,7 +880,7 @@
     "role": "ADMIN",
     "platform": "web",
     "route": "/admin/reports",
-    "api": "GET /admin/cases",
+    "api": "GET /cases",
     "entities": "Case, Report",
     "inputs": "Status, category, priority, assignment filters",
     "outputs": "Triage queue",
@@ -627,7 +888,15 @@
     "purpose": "The administrator's central triage tool, listing every incoming complaint filed by users through the app.",
     "components": "Counters: Open reports (37), High priority (9), Escalated (5), Resolved today (21)\nFilter tabs: All reports / New / In review / Escalated / Unassigned / Resolved\nTable columns: report reference & category (Cyber harassment, Domestic, Workplace, Stalking, Public harassment), colour-coded priority, status, assigned handler, time filed",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image4.png",
-    "component": "apps/web/src/features/S04.tsx"
+    "component": "apps/web/src/features/cases.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/admin/reports",
+    "testRefs": [
+      "tests/integration.test.ts",
+      "tests/e2e/staff.spec.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S05",
@@ -638,14 +907,22 @@
     "platform": "web",
     "route": "/admin/cases/:reference",
     "api": "GET /cases/:reference; POST /cases/:reference/assignment; POST /cases/:reference/actions",
-    "entities": "Case, CaseEvent, CaseAssignment, Evidence, AIAnalysis",
+    "entities": "Case, CaseEvent, Evidence, AIAnalysis",
     "inputs": "Officer, request info, internal note, resolve/escalate",
     "outputs": "Same case assigned with auditable timeline",
     "test": "cross-role-case",
     "purpose": "Opened from the Reports Queue, this is the full case package for a single report, giving the administrator everything needed to triage and route it.",
     "components": "AI Risk Assessment banner explaining why the model flagged the case High risk (e.g. blacklisted language detected, anonymous filer, multiple evidence items attached) with a recommended action ('assign to Police within 1 hour')\nEvidence bundle — attached files (e.g. chat_thread_export.pdf, screenshot_message_02.jpg) with automatic hash verification\nReport narrative — the filer's free-text description of the incident\nCase activity / audit trail — chronological log of automated and manual actions\nCase details panel: status, priority, category, filer (anonymous/named), filed date\nActions: Assign to Police, Request more info, add an internal note, Mark as resolved, Escalate immediately",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image5.png",
-    "component": "apps/web/src/features/S05.tsx"
+    "component": "apps/web/src/features/cases.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/admin/cases/:reference",
+    "testRefs": [
+      "tests/integration.test.ts",
+      "tests/e2e/staff.spec.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S06",
@@ -663,7 +940,14 @@
     "purpose": "Queues community posts and comments that have been auto-flagged by the AI model or reported by users, for administrator review.",
     "components": "Counters: Pending review (23), Auto-flagged (14), Reported by users (9), Removed today (31)\nFilter tabs: All flagged / Posts / Comments / Auto-flagged / User-reported\nEach item shows the flag reason (e.g. a post sharing a phone number in violation of contact-sharing guidelines, a comment reported for harassment language)\nPer-item actions: Approve or Remove",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image6.png",
-    "component": "apps/web/src/features/S06.tsx"
+    "component": "apps/web/src/features/admin.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/admin/moderation",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S07",
@@ -673,15 +957,23 @@
     "role": "ADMIN",
     "platform": "web",
     "route": "/admin/settings/models",
-    "api": "GET /admin/models; GET /admin/model-events; POST /admin/model-events",
-    "entities": "ModelVersion, ModelMetric, ModelAuditEvent, RetrainingRun",
+    "api": "GET /admin/models; POST /admin/model-events",
+    "entities": "ModelVersion, ModelMetric, ModelAuditEvent",
     "inputs": "Language/model filter; audited override metadata",
     "outputs": "Actual evaluation provenance or unavailable metrics",
     "test": "model-provenance",
     "purpose": "Gives the administrator oversight of every AI model running in production — the transparency and accountability layer behind the platform's automated detection features.",
     "components": "Top metrics: Harassment model accuracy (94.2%), False-positive rate (3.1%), Models in production (6), Regional performance score (91%)\nModel Performance table — Harassment detection, Contact-info detection, Spam/phishing detection, Crisis-language detection — each with accuracy %, drift status (Stable/Drifting), and last retrained date\nSinhala / Tamil Coverage panel — per-language accuracy (English highest, Sinhala and Tamil trailing)\nRecent Audit Activity feed — moderator overrides, automatic escalations, and retraining events (e.g. 'retrain triggered — new Tamil dataset added')",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image7.png",
-    "component": "apps/web/src/features/S07.tsx"
+    "component": "apps/web/src/features/admin.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Registry, stored metric display and model audit actions exist; evaluated metrics, drift and training pipeline are absent (G05).",
+    "navigation": "/admin/settings/models",
+    "testRefs": [
+      "tests/integration.test.ts",
+      "tests/providers.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S08",
@@ -692,14 +984,21 @@
     "platform": "web",
     "route": "/police/sign-in",
     "api": "POST /auth/login",
-    "entities": "User, PoliceProfile, RefreshSession",
+    "entities": "User, StaffProfile, RefreshSession",
     "inputs": "Badge ID, password, remember device",
     "outputs": "Verified officer session",
     "test": "staff-authentication",
     "purpose": "Restricted login for verified police units, presented as a split panel: a branded trust panel (\"Respond faster. Protect more.\") on the left and the credential form on the right.",
     "components": "Badge ID field (e.g. WP-CDU-0044) and Password field\n\"Remember this device\" checkbox and \"Forgot access code?\" link\nAlternate authentication: \"Sign in with National Police ID\"\nTrust indicators: verified police-unit access only, real-time SOS dispatch alerts, secure chain-of-custody evidence access, end-to-end encryption, GPS-enabled",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image8.png",
-    "component": "apps/web/src/features/S08.tsx"
+    "component": "apps/web/src/features/sign-in.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/police/sign-in",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S09",
@@ -710,14 +1009,21 @@
     "platform": "web",
     "route": "/police/live",
     "api": "GET /police/alerts; POST /sos/:id/respond",
-    "entities": "SOSAlert, SOSEvent, PoliceProfile, LocationEvent",
+    "entities": "SOSAlert, SOSEvent, StaffProfile, LocationEvent",
     "inputs": "Jurisdiction map, alert, Respond",
     "outputs": "Scoped alert queue and response assignment",
     "test": "sos-jurisdiction",
     "purpose": "The officer's landing screen — a real-time operational view of active emergencies in their jurisdiction.",
     "components": "Counters: Active SOS (3), Assigned to me (5), Avg response time (4.2 min), Resolved today (12)\nLive SOS Map with markers for active incidents (e.g. 'SOS – Nugegoda', 'Escort Unit 12')\nAlert Queue — cards per alert showing type, location, and elapsed time, each with a one-tap Respond button; lower-priority items get a View case button\nLeft navigation: Live, Cases, Map, Profile",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image9.png",
-    "component": "apps/web/src/features/S09.tsx"
+    "component": "apps/web/src/features/police.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Live database SOS queue and responder claiming exist; map is a coordinate visualization and dispatch is local (G08/G09).",
+    "navigation": "/police/live",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S10",
@@ -735,7 +1041,15 @@
     "purpose": "Opened from the Cases list, this presents the full investigation record for a case assigned to the officer.",
     "components": "Evidence bundle — sealed, hash-verified evidence carried over from the user's original report (e.g. chat_thread_export.pdf, screenshot_message_02.jpg)\nLocation trail — reconstructed from the user's last known GPS points ('Last known location – Nugegoda Junction', 'En route – High Level Road', 'Starting point – Home address on file')\nTimeline — chronological case activity (evidence sealed for chain of custody → case opened by officer → evidence hash-verified → report routed to unit)\nCase metadata panel: status (Investigating), priority (High), category, assigned officer, filed/opened timestamps\nActions: Update case status, Request additional evidence, Escalate to CID",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image10.png",
-    "component": "apps/web/src/features/S10.tsx"
+    "component": "apps/web/src/features/cases.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Assigned case, evidence, messaging and actions work; case-specific location trail has no ingestion/linkage yet (G20).",
+    "navigation": "/police/cases/:reference",
+    "testRefs": [
+      "tests/integration.test.ts",
+      "tests/e2e/staff.spec.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S11",
@@ -753,7 +1067,15 @@
     "purpose": "A simple, auditable stepper for progressing an investigation through its lifecycle.",
     "components": "Stage stepper: Filed (complete) → Under investigation (current) → Suspect contacted → Resolved\nInvestigation notes — free-text field recorded against the case file, visible to CID if the case is later escalated\nCancel and Save update actions",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image11.png",
-    "component": "apps/web/src/features/S11.tsx"
+    "component": "apps/web/src/features/cases.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/police/cases/:reference/status",
+    "testRefs": [
+      "tests/integration.test.ts",
+      "tests/e2e/staff.spec.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S12",
@@ -764,14 +1086,21 @@
     "platform": "web",
     "route": "/counselor/sign-in",
     "api": "POST /auth/login",
-    "entities": "User, CounselorProfile, RefreshSession",
+    "entities": "User, StaffProfile, RefreshSession",
     "inputs": "Practitioner ID, password, remember device",
     "outputs": "Verified counselor session",
     "test": "staff-authentication",
     "purpose": "Restricted login for verified counselors, presented as a split panel: a branded trust panel (\"Listen closely. Help fully.\") on the left and the credential form on the right.",
     "components": "Practitioner ID field (e.g. CNS-0071) and Password field\n\"Remember this device\" checkbox and \"Forgot access code?\" link\nAlternate authentication: \"Sign in with Health Ministry ID\"\nTrust indicators: verified counselor access only, confidential case notes fully encrypted, direct escalation to police & support teams",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image12.png",
-    "component": "apps/web/src/features/S12.tsx"
+    "component": "apps/web/src/features/sign-in.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/counselor/sign-in",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S13",
@@ -781,15 +1110,22 @@
     "role": "COUNSELOR",
     "platform": "web",
     "route": "/counselor/sessions",
-    "api": "GET /counseling/appointments; GET /counseling/messages",
-    "entities": "CounselingAppointment, CounselingSession, CounselingMessage",
+    "api": "GET /counseling/appointments; GET /counseling/sessions/:id/messages",
+    "entities": "CounselingAppointment, CounselingMessage",
     "inputs": "Today/session selection; Join / View",
     "outputs": "Assigned sessions, messages, weekly progress",
     "test": "counselor-access",
     "purpose": "The counselor's home screen, summarising the day's workload.",
     "components": "Counters: Sessions today, Active clients (38), Unread messages (6), Completed this week (22)\nToday's Sessions list — client ID, time, modality tag (Video/Chat), presenting-concern tag (e.g. 'Urgent', 'Follow-up', 'Crisis follow-up'), and a one-tap Join or View action\nWeekly progress bar (e.g. '33 of 50 sessions — 70%')\nRecent Messages panel with unread indicators\nLeft navigation: Sessions, Clients, Messages, Profile",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image13.png",
-    "component": "apps/web/src/features/S13.tsx"
+    "component": "apps/web/src/features/counseling.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Appointments and private messages work; live audio/video transport and configured performance targets are absent (G16).",
+    "navigation": "/counselor/sessions",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S14",
@@ -799,15 +1135,23 @@
     "role": "COUNSELOR",
     "platform": "web",
     "route": "/counselor/clients/:clientId",
-    "api": "GET /counseling/clients/:clientId; POST /counseling/sessions; POST /counseling/escalations",
-    "entities": "CounselingClient, CounselingSession, CounselingNote, Consent",
+    "api": "GET /counseling/clients/:id; POST /counseling/sessions/:id/start; POST /counseling/sessions/:id/escalate",
+    "entities": "CounselingAppointment, CounselingNote, Consent",
     "inputs": "Start session / full history / crisis escalation",
     "outputs": "Pseudonymous client snapshot with consented screening",
     "test": "counselor-privacy",
     "purpose": "Opened from the sessions list, this is an anonymised client-session detail view combining wellbeing history and clinical notes.",
     "components": "Client snapshot — most recent screening score (e.g. 8/27), risk level (Mid-severity), number of prior sessions completed\nSession history — past sessions with duration and modality (e.g. 'Second check-in – coping strategies, Video, 45 min')\nCare notes — free-text clinical observations and recommended cadence\nSide panel: Client ID, risk level, first/next session dates, assigned counselor\nActions: Start session, View full history, Escalate to crisis team",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image14.png",
-    "component": "apps/web/src/features/S14.tsx"
+    "component": "apps/web/src/features/counseling.tsx",
+    "status": "PARTIALLY IMPLEMENTED",
+    "limitations": "Pseudonymous snapshot, consented screening and notes work; crisis action records intent without external dispatch (G16).",
+    "navigation": "/counselor/clients/:clientId",
+    "testRefs": [
+      "tests/integration.test.ts",
+      "tests/e2e/staff.spec.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S15",
@@ -825,7 +1169,14 @@
     "purpose": "A structured clinical note-taking form completed after a session concludes.",
     "components": "Session summary (free text)\nFollow-up cadence selector: One-time / Weekly / Biweekly / Monthly, plus a cadence detail note (e.g. 'Weekly check-ins for 4 weeks')\nUpdated risk-assessment selector: Low / Mid / Moderate / High\nNext session date picker\nCancel and Save & schedule follow-up actions",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image15.png",
-    "component": "apps/web/src/features/S15.tsx"
+    "component": "apps/web/src/features/counseling.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/counselor/sessions/:id/notes",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   },
   {
     "id": "S16",
@@ -836,13 +1187,20 @@
     "platform": "web",
     "route": "/legal/queries",
     "api": "GET /legal/queries; PATCH /legal/queries/:id; POST /legal/queries/:id/messages; POST /legal/resources; PATCH /legal/resources/:id",
-    "entities": "LegalQuery, LegalMessage, LegalResource, LegalAdvisorProfile",
+    "entities": "LegalQuery, LegalMessage, LegalResource, StaffProfile",
     "inputs": "New/In progress/Answered, Respond/Continue, resource editing",
     "outputs": "Query response, resource library and calculated impact",
     "test": "legal-advisor-access",
     "purpose": "The advisor's primary workspace for handling incoming legal questions and maintaining public guidance resources.",
     "components": "Counters: Open queries (9), Answered today (14), Avg response time (3.1 hr), Resources published (6)\nQuery Queue — incoming questions (e.g. 'Cyber blackmail question', 'Workplace rights', 'Custody & safety planning', 'Restraining order process') with status tags (New / In progress / Answered) and a Respond or Continue action per item\nMonthly Impact panel — progress bar of queries answered this month (e.g. '215 of 250 — 87%')\nResource Library — published guides that feed the user-side 'Know Your Rights' hub (e.g. 'Filing a police complaint – guide', 'Restraining orders explained', 'Know your workplace rights'), each with a view count\nLeft navigation: Queries, Resources, Impact, Profile",
     "image": "sources/Suraksha_Screen_Admin,police,counsilor/image16.png",
-    "component": "apps/web/src/features/S16.tsx"
+    "component": "apps/web/src/features/legal.tsx",
+    "status": "IMPLEMENTED",
+    "limitations": "Native device and pixel-level visual validation remain a shared qualification; see G21.",
+    "navigation": "/legal/queries",
+    "testRefs": [
+      "tests/integration.test.ts"
+    ],
+    "testScope": "API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen."
   }
 ]

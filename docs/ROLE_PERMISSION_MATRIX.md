@@ -1,4 +1,4 @@
-# Role permission matrix — proposed, not implemented
+# Role permission matrix — source-derived backend policy
 
 Roles come from the detailed mobile and staff catalogs. R3.8's textual EER description omits Legal Advisor; S4.1 and the user's explicit five-role requirement add it. One account has one role (disjoint specialization), not separate authentication systems. Default deny applies to endpoints and individual records/fields.
 
@@ -6,7 +6,7 @@ Roles come from the detailed mobile and staff catalogs. R3.8's textual EER descr
 |---|---|---|---|---|---|---|
 | Own preferences/security/session | Own | Own | Own | Own | Own | M2–11, staff sign-ins |
 | Account provision/verify/suspend | No staff provisioning | Manage; audited | No | No | No | S1.3 |
-| Reports and case metadata | Own | Operational triage across cases | Assigned; jurisdiction policy for queues | Only explicit care referral minimum | Only explicit legal referral minimum | S1.5/2.3, cross-role section |
+| Reports and case metadata | Own | Operational triage across cases | Assigned; jurisdiction policy for queues | No general case access; assigned care records only | No general case access; claimed legal queries only | S1.5/2.3, cross-role section |
 | Anonymous reporter identity | Own | Hidden in triage | Assigned handler exception only | Pseudonymous client only | No implicit identity access | M25, S3.3 |
 | Case assignment | No | Verified officer, audited | Respond to eligible SOS; no general reassignment | No | No | S1.5/2.2 |
 | Investigation stage/notes | Safe timeline only | Triage actions; permitted operational timeline | Assigned case update | No | No | S2.3–2.4 |
@@ -34,3 +34,5 @@ Roles come from the detailed mobile and staff catalogs. R3.8's textual EER descr
 - Minimum test set: all 20 directed pairs of distinct roles denied on representative restricted endpoints, unassigned same-role access, revoked/suspended accounts, admin clinical-note denial, counselor identity projection, screening consent withdrawal, evidence ownership/attachment authorization and legal-query isolation.
 
 Jurisdiction configuration, CID/crisis-team membership, retention rules and legal referral evidence-sharing scope remain unspecified. Do not grant universal access to compensate.
+
+Implementation: `services/api/src/auth/auth.ts` globally guards routes; role decorators restrict controllers/actions, and each record service checks ownership/assignment. Integration tests verify directed cross-role denials, anonymous projections and clinical isolation. Recovery/real staff eligibility validation are not provider-connected (G08).

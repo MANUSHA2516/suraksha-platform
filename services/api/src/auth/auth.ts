@@ -233,7 +233,7 @@ export class AuthController {
   ) {
     return this.send(await this.auth.register(body), req, res);
   }
-  @Public() @Post('login') async login(
+  @Throttle({ default: { limit: 10, ttl: 60000 } }) @Public() @Post('login') async login(
     @Body() body: unknown,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
