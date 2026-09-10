@@ -153,6 +153,7 @@ model Case {
   events CaseEvent[]
   messages CaseMessage[]
   analyses AIAnalysis[]
+  locations LocationEvent[]
   @@unique([ownerId, requestKey])
   @@index([officerId, stage])
   @@index([ownerId, createdAt])
@@ -273,11 +274,14 @@ model LocationEvent {
   owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
   sosId String?
   sos SOSAlert? @relation(fields:[sosId],references:[id],onDelete:Cascade)
+  caseId String?
+  case Case? @relation(fields:[caseId],references:[id],onDelete:SetNull)
   latitude Float
   longitude Float
   accuracy Float
   capturedAt DateTime
   @@index([ownerId,capturedAt])
+  @@index([caseId,capturedAt])
 }
 model DangerZone {
   id String @id @default(uuid())

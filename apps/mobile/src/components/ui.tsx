@@ -131,6 +131,7 @@ export const s = StyleSheet.create({
 export function Page({
   title,
   tag,
+  meta,
   subtitle,
   children,
   nav,
@@ -138,6 +139,7 @@ export function Page({
 }: {
   title: string;
   tag?: string;
+  meta?: string;
   subtitle?: string;
   children: React.ReactNode;
   nav?: boolean;
@@ -151,7 +153,16 @@ export function Page({
             <Text style={[s.link, { textAlign: 'left' }]}>{t('\u2039 Back')}</Text>
           </Pressable>
         )}
-        {tag && <Text style={s.tag}>{tag}</Text>}
+        {(tag || meta) && (
+          <View style={[s.row, { justifyContent: 'space-between', marginBottom: 8 }]}>
+            {tag ? <Text style={s.tag}>{tag}</Text> : <View />}
+            {meta ? (
+              <Text style={[s.muted, { textTransform: 'uppercase', letterSpacing: 0.6 }]}>
+                {meta}
+              </Text>
+            ) : null}
+          </View>
+        )}
         <Text accessibilityRole="header" style={s.title}>
           {title}
         </Text>
@@ -164,28 +175,246 @@ export function Page({
 }
 export function BottomNav({ navigation }: { navigation: any }) {
   return (
-    <View style={s.nav}>
+    <View style={[s.nav, { alignItems: 'flex-end', paddingBottom: 8 }]}>
       {[
         ['⌂', 'Home', 'M12'],
         ['♧', 'Knowledge', 'M28'],
-        ['△', 'SOS', 'M13'],
+        ['!', 'SOS', 'M13'],
         ['▢', 'Vault', 'M18'],
         ['♙', 'Profile', 'M11'],
-      ].map(([icon, label, screen]) => (
-        <Pressable
-          key={label}
-          style={s.navItem}
-          accessibilityRole="button"
-          accessibilityLabel={label}
-          onPress={() => navigation.navigate(screen)}
-        >
-          <Text style={{ fontSize: 22, color: label === 'SOS' ? colors.red : colors.green }}>
-            {icon}
-          </Text>
-          <Text style={s.navText}>{label}</Text>
-        </Pressable>
+      ].map(([icon, label, screen]) =>
+        label === 'SOS' ? (
+          <Pressable
+            key={label}
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            onPress={() => navigation.navigate(screen)}
+            style={[s.navItem, { marginTop: -18 }]}
+          >
+            <View
+              style={{
+                width: 54,
+                height: 54,
+                borderRadius: 27,
+                backgroundColor: colors.red,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: colors.red,
+                shadowOpacity: 0.35,
+                shadowRadius: 8,
+                elevation: 6,
+              }}
+            >
+              <Text style={{ color: 'white', fontSize: 20, fontWeight: '700' }}>{icon}</Text>
+            </View>
+            <Text style={[s.navText, { color: colors.red }]}>{label}</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            key={label}
+            style={s.navItem}
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            onPress={() => navigation.navigate(screen)}
+          >
+            <Text style={{ fontSize: 22, color: colors.green }}>{icon}</Text>
+            <Text style={s.navText}>{label}</Text>
+          </Pressable>
+        ),
+      )}
+    </View>
+  );
+}
+export function ShieldMark({ size = 72 }: { size?: number }) {
+  const box = size;
+  return (
+    <View
+      accessibilityLabel={t('Suraksha shield')}
+      style={{
+        width: box,
+        height: box * 1.15,
+        alignSelf: 'center',
+        marginVertical: 18,
+        borderWidth: 3,
+        borderColor: colors.green,
+        borderTopLeftRadius: box / 2.2,
+        borderTopRightRadius: box / 2.2,
+        borderBottomLeftRadius: box / 1.4,
+        borderBottomRightRadius: box / 1.4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#e8faf2',
+      }}
+    >
+      <Text style={{ color: colors.green, fontSize: box * 0.45, fontWeight: '700' }}>✓</Text>
+    </View>
+  );
+}
+export function Stepper({
+  step = 1,
+  total = 5,
+  label,
+}: {
+  step?: number;
+  total?: number;
+  label?: string;
+}) {
+  return (
+    <View style={{ marginBottom: 18 }}>
+      {label && (
+        <Text style={[s.muted, { textAlign: 'center', marginBottom: 8 }]}>
+          {t('Step')} {step} {t('of')} {total} · {label}
+        </Text>
+      )}
+      <View style={[s.row, { justifyContent: 'center', gap: 0 }]}>
+        {Array.from({ length: total }, (_, i) => (
+          <View key={i} style={[s.row, { gap: 0 }]}>
+            <View
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 9,
+                borderWidth: 2,
+                borderColor: i < step ? colors.green : colors.line,
+                backgroundColor: i + 1 === step ? colors.green : i < step ? colors.blue : 'white',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {i + 1 === step && <Text style={{ color: 'white', fontSize: 10 }}>✓</Text>}
+            </View>
+            {i < total - 1 && (
+              <View
+                style={{
+                  width: 28,
+                  height: 2,
+                  backgroundColor: i + 1 < step ? colors.green : colors.line,
+                  alignSelf: 'center',
+                }}
+              />
+            )}
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+export function SegmentedControl({
+  options,
+  value,
+  onChange,
+}: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <View
+      style={[
+        s.row,
+        {
+          backgroundColor: colors.pale,
+          borderRadius: 14,
+          padding: 4,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: colors.line,
+        },
+      ]}
+    >
+      {options.map((option) => {
+        const selected = option === value;
+        return (
+          <Pressable
+            key={option}
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
+            onPress={() => onChange(option)}
+            style={{
+              flex: 1,
+              backgroundColor: selected ? colors.green : 'transparent',
+              borderRadius: 11,
+              paddingVertical: 12,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: selected ? 'white' : colors.muted, fontWeight: '600' }}>
+              {option}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+export function TrustBadges({
+  items = ['SOS', 'ENCRYPTED', 'VERIFIED'],
+}: {
+  items?: string[];
+}) {
+  return (
+    <View style={[s.row, { justifyContent: 'center', marginTop: 16, flexWrap: 'wrap' }]}>
+      {items.map((item, i) => (
+        <View key={item} style={[s.row, { gap: 6 }]}>
+          <View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 2,
+              backgroundColor: i === 0 ? colors.blue : colors.green,
+            }}
+          />
+          <Text style={s.trust}>{item}</Text>
+        </View>
       ))}
     </View>
+  );
+}
+export function IconCard({
+  title,
+  detail,
+  icon,
+  onPress,
+  tone = 'default',
+}: {
+  title: string;
+  detail: string;
+  icon: string;
+  onPress: () => void;
+  tone?: 'default' | 'sos';
+}) {
+  const sos = tone === 'sos';
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      onPress={onPress}
+      style={[
+        s.card,
+        s.row,
+        sos
+          ? { backgroundColor: colors.red, borderColor: colors.red }
+          : { backgroundColor: '#f7fbfe' },
+      ]}
+    >
+      <View
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: sos ? 'white' : colors.navy,
+        }}
+      >
+        <Text style={{ fontSize: 20, color: sos ? colors.red : 'white' }}>{icon}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={[s.text, sos && { color: 'white', fontWeight: '700' }]}>{title}</Text>
+        <Text style={[s.muted, sos && { color: '#ffe4e1' }]}>{detail}</Text>
+      </View>
+      <Text style={{ color: sos ? 'white' : colors.muted, fontSize: 22 }}>›</Text>
+    </Pressable>
   );
 }
 export function Button({
@@ -264,6 +493,8 @@ export function Input({
   secure = false,
   multiline = false,
   keyboardType = 'default',
+  icon,
+  revealable = false,
 }: {
   label: string;
   value: string;
@@ -271,21 +502,87 @@ export function Input({
   secure?: boolean;
   multiline?: boolean;
   keyboardType?: 'default' | 'numeric' | 'phone-pad';
+  icon?: string;
+  revealable?: boolean;
 }) {
+  const [hidden, setHidden] = useState(secure);
   return (
     <View>
       <Text style={s.label}>{label}</Text>
-      <TextInput
-        accessibilityLabel={label}
-        value={value}
-        onChangeText={onChange}
-        secureTextEntry={secure}
-        multiline={multiline}
-        keyboardType={keyboardType}
-        style={[s.input, multiline && { minHeight: 90, textAlignVertical: 'top' }]}
-      />
+      <View style={{ position: 'relative' }}>
+        {icon ? (
+          <Text
+            style={{
+              position: 'absolute',
+              left: 12,
+              top: multiline ? 14 : 13,
+              zIndex: 1,
+              color: colors.navy,
+              fontSize: 16,
+            }}
+          >
+            {icon}
+          </Text>
+        ) : null}
+        <TextInput
+          accessibilityLabel={label}
+          value={value}
+          onChangeText={onChange}
+          secureTextEntry={secure ? hidden : false}
+          multiline={multiline}
+          keyboardType={keyboardType}
+          style={[
+            s.input,
+            icon ? { paddingLeft: 36 } : null,
+            revealable ? { paddingRight: 44 } : null,
+            multiline && { minHeight: 90, textAlignVertical: 'top' },
+          ]}
+        />
+        {revealable && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={hidden ? t('Show password') : t('Hide password')}
+            onPress={() => setHidden((v) => !v)}
+            style={{ position: 'absolute', right: 12, top: 12 }}
+          >
+            <Text style={{ color: colors.muted }}>{hidden ? '◯' : '◉'}</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
+}
+export function PasswordStrength({ value }: { value: string }) {
+  const score =
+    (value.length >= 8 ? 1 : 0) +
+    (/[0-9]/.test(value) ? 1 : 0) +
+    (/[^a-zA-Z0-9]/.test(value) ? 1 : 0) +
+    (/[A-Z]/.test(value) && /[a-z]/.test(value) ? 1 : 0);
+  return (
+    <View style={[s.row, { gap: 6, marginBottom: 8 }]}>
+      {Array.from({ length: 4 }, (_, i) => (
+        <View
+          key={i}
+          style={{
+            flex: 1,
+            height: 5,
+            borderRadius: 3,
+            backgroundColor: i < score ? colors.green : colors.line,
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+export function relativeTime(iso: string) {
+  const delta = Date.now() - new Date(iso).getTime();
+  if (!Number.isFinite(delta) || delta < 0) return new Date(iso).toLocaleString();
+  const hours = Math.floor(delta / 3_600_000);
+  if (hours < 24) return hours < 1 ? t('Added today') : t('Added today');
+  const days = Math.floor(hours / 24);
+  if (days === 1) return t('1 day ago');
+  if (days < 14) return `${days} days ago`;
+  return new Date(iso).toLocaleDateString();
 }
 export function Choice({
   label,

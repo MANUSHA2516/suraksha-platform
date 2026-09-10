@@ -22,8 +22,8 @@ All three source documents are authoritative; all 47 catalog screens have an imp
 | Suraksha_UI_Screens_user NEW RESULT.docx Screen 16 | M16 | `apps/mobile/src/features/safety.tsx` | POST /location/shares; DELETE /location/shares/:id; POST /location/events | LocationShare, LocationEvent, TrustedContact | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts` | PARTIALLY IMPLEMENTED |
 | Suraksha_UI_Screens_user NEW RESULT.docx Screen 17 | M17 | `apps/mobile/src/features/safety.tsx` | POST /routes; GET /danger-zones | DangerZone, LocationEvent | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts` | PARTIALLY IMPLEMENTED |
 | Suraksha_UI_Screens_user NEW RESULT.docx Screen 18 | M18 | `apps/mobile/src/features/evidence.tsx` | GET /evidence | Evidence | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts` | IMPLEMENTED |
-| Suraksha_UI_Screens_user NEW RESULT.docx Screen 19 | M19 | `apps/mobile/src/features/evidence.tsx` | POST /evidence | Evidence, AuditLog | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts` | PARTIALLY IMPLEMENTED |
-| Suraksha_UI_Screens_user NEW RESULT.docx Screen 20 | M20 | `apps/mobile/src/features/evidence.tsx` | GET /evidence/:id; POST /evidence/:id/unlock; GET /evidence/:id/content | Evidence, EvidenceAccess | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts` | PARTIALLY IMPLEMENTED |
+| Suraksha_UI_Screens_user NEW RESULT.docx Screen 19 | M19 | `apps/mobile/src/features/evidence.tsx` | POST /evidence | Evidence, AuditLog | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts` | IMPLEMENTED |
+| Suraksha_UI_Screens_user NEW RESULT.docx Screen 20 | M20 | `apps/mobile/src/features/evidence.tsx` | GET /evidence/:id; POST /evidence/:id/unlock; GET /evidence/:id/content | Evidence, EvidenceAccess | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts` | IMPLEMENTED |
 | Suraksha_UI_Screens_user NEW RESULT.docx Screen 21 | M21 | `apps/mobile/src/features/evidence.tsx` | POST /analysis | AIAnalysis, Evidence, ModelVersion | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts` | PARTIALLY IMPLEMENTED |
 | Suraksha_UI_Screens_user NEW RESULT.docx Screen 22 | M22 | `apps/mobile/src/features/evidence.tsx` | GET /analysis/:id | AIAnalysis, Evidence | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts` | PARTIALLY IMPLEMENTED |
 | Suraksha_UI_Screens_user NEW RESULT.docx Screen 23 | M23 | `apps/mobile/src/features/reporting.tsx` | POST /legal/queries; GET /legal/queries/:id; POST /legal/queries/:id/messages; POST /legal/queries/:id/escalate | LegalQuery, LegalMessage, LegalResource | `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts` | PARTIALLY IMPLEMENTED |
@@ -44,7 +44,7 @@ All three source documents are authoritative; all 47 catalog screens have an imp
 | Suraksha_Screen_Admin,police,counsilor.docx 1.7 | S07 | `apps/web/src/features/admin.tsx` | GET /admin/models; POST /admin/model-events | ModelVersion, ModelMetric, ModelAuditEvent | `tests/integration.test.ts`, `tests/providers.test.ts` | PARTIALLY IMPLEMENTED |
 | Suraksha_Screen_Admin,police,counsilor.docx 2.1 | S08 | `apps/web/src/features/sign-in.tsx` | POST /auth/login | User, StaffProfile, RefreshSession | `tests/integration.test.ts` | IMPLEMENTED |
 | Suraksha_Screen_Admin,police,counsilor.docx 2.2 | S09 | `apps/web/src/features/police.tsx` | GET /police/alerts; POST /sos/:id/respond | SOSAlert, SOSEvent, StaffProfile, LocationEvent | `tests/integration.test.ts` | PARTIALLY IMPLEMENTED |
-| Suraksha_Screen_Admin,police,counsilor.docx 2.3 | S10 | `apps/web/src/features/cases.tsx` | GET /cases/:reference; GET /evidence/:id/content; POST /cases/:reference/actions | Case, CaseEvent, CaseEvidence, LocationEvent, EvidenceAccess | `tests/integration.test.ts`, `tests/e2e/staff.spec.ts` | PARTIALLY IMPLEMENTED |
+| Suraksha_Screen_Admin,police,counsilor.docx 2.3 | S10 | `apps/web/src/features/cases.tsx` | GET /cases/:reference; GET /evidence/:id/content; POST /cases/:reference/actions | Case, CaseEvent, CaseEvidence, LocationEvent, EvidenceAccess | `tests/integration.test.ts`, `tests/e2e/staff.spec.ts` | IMPLEMENTED |
 | Suraksha_Screen_Admin,police,counsilor.docx 2.4 | S11 | `apps/web/src/features/cases.tsx` | PATCH /cases/:reference/status | Case, CaseEvent, AuditLog | `tests/integration.test.ts`, `tests/e2e/staff.spec.ts` | IMPLEMENTED |
 | Suraksha_Screen_Admin,police,counsilor.docx 3.1 | S12 | `apps/web/src/features/sign-in.tsx` | POST /auth/login | User, StaffProfile, RefreshSession | `tests/integration.test.ts` | IMPLEMENTED |
 | Suraksha_Screen_Admin,police,counsilor.docx 3.2 | S13 | `apps/web/src/features/counseling.tsx` | GET /counseling/appointments; GET /counseling/sessions/:id/messages | CounselingAppointment, CounselingMessage | `tests/integration.test.ts` | PARTIALLY IMPLEMENTED |
@@ -60,7 +60,7 @@ All three source documents are authoritative; all 47 catalog screens have an imp
 | F02 | M12 | safety.tsx Home; GET /me/overview; mobile screen test | IMPLEMENTED — Jobs entry only; G13 |
 | F03 | M13–M16/S09 | safety controllers/providers; SOSAlert/SOSEvent; integration SOS and hold test | PARTIALLY IMPLEMENTED — G08 |
 | F04 | M16–M17 | LocationShare/LocationEvent; SafeRouteProvider; position unit tests | PARTIALLY IMPLEMENTED — G09 |
-| F05 | M18–M20/S05/S10 | evidence service; S3 AES-GCM; provider tamper/authorization tests | PARTIALLY IMPLEMENTED — G19 |
+| F05 | M18–M20/S05/S10 | evidence service; S3 AES-GCM; provider tamper/authorization tests | IMPLEMENTED — device qualification G21 |
 | F06 | M21–M22/S07 | analysis.ts and services/ai; AIAnalysis; provider and Python tests | PARTIALLY IMPLEMENTED — G05/G19 |
 | F07 | M24–M26/S04–S05/S10–S11 | cases.ts; Case/Report/CaseEvent; integration + Playwright shared reference | IMPLEMENTED |
 | F08 | M23/M28/S16 | legal.ts; LegalQuery/LegalMessage/LegalResource; advisor isolation test | PARTIALLY IMPLEMENTED — G07 |
@@ -80,7 +80,7 @@ All three source documents are authoritative; all 47 catalog screens have an imp
 | N05 | OutboxEvent and authenticated SSE; current lists refetched after events | PARTIALLY IMPLEMENTED — durable reconnect/backpressure and realtime revocation tests G22 |
 | N06 | shared locales/en/si/ta; accessible controls and locale fallback | PARTIALLY IMPLEMENTED — verified translations and assistive-device audit G04/G21 |
 | N07 | Explicit demo modes, null confidence, draft legal content, no false emergency receipt; provider tests | IMPLEMENTED |
-| N08 | 39 Vitest, 33 mobile, 3 Python, browser cross-role tests; see VERIFICATION.md | PARTIALLY IMPLEMENTED — device and comprehensive screen regression coverage G21 |
+| N08 | 43 Vitest, 37 mobile, 3 Python, browser cross-role tests; see VERIFICATION.md | PARTIALLY IMPLEMENTED — device and comprehensive screen regression coverage G21 |
 | N09 | Nine baseline documents, 47-row traceability, README and audit script | IMPLEMENTED |
 | N10 | Confirmed active-data deletion and consent revocation; no fake offline dispatch | PARTIALLY IMPLEMENTED — recovery, backup retention and offline policy G12/G18 |
 | RESEARCH | services/ai/RESEARCH.md; interfaces, preprocessing and demo only | NOT SPECIFIED ENOUGH IN SOURCE DOCUMENTS — datasets, approved study and real evaluations absent |

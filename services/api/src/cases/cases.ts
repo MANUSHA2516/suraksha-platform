@@ -53,10 +53,18 @@ export class CaseService {
   async view(user: Principal, reference: string) {
     const item = await this.allowed(user, reference);
     const analyses = await this.db.aIAnalysis.findMany({
-      where: { ownerId: item.ownerId, OR: [
-        { caseId: item.id },
-        { evidenceId: { in: item.evidence.map((link) => link.evidenceId) } },
-      ] },
+      where: {
+        ownerId: item.ownerId,
+        OR: [
+          { caseId: item.id },
+          { evidenceId: { in: item.evidence.map((link) => link.evidenceId) } },
+        ],
+      },
+    });
+    const locations = await this.db.locationEvent.findMany({
+      where: { caseId: item.id },
+      orderBy: { capturedAt: 'asc' },
+      take: 100,
     });
     return {
       id: item.id,
@@ -91,6 +99,14 @@ export class CaseService {
         modelVersion: a.modelVersion,
         validationStatus: a.validationStatus,
       })),
+      locations: locations.map((p) => ({
+        id: p.id,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        accuracy: p.accuracy,
+        capturedAt: p.capturedAt,
+        source: (p.sosId ? 'SOS' : 'REPORT') as 'SOS' | 'SHARE' | 'REPORT',
+      })),
     };
   }
   async list(user: Principal) {
@@ -118,6 +134,14 @@ export class CaseService {
       const ids = [...new Set(input.evidenceIds)];
       const count = await tx.evidence.count({ where: { id: { in: ids }, ownerId: user.id } });
       if (count !== ids.length) throw new ForbiddenException('Attach only your own evidence');
+      const locationIds = [...new Set(input.locationEventIds)];
+      if (locationIds.length) {
+        const owned = await tx.locationEvent.count({
+          where: { id: { in: locationIds }, ownerId: user.id },
+        });
+        if (owned !== locationIds.length)
+          throw new ForbiddenException('Attach only your own location points');
+      }
       const created = await tx.case.create({
         data: {
           reference: `pending-${randomUUID()}`,
@@ -139,6 +163,28 @@ export class CaseService {
       for (const evidenceId of ids)
         await tx.caseEvidence.create({ data: { caseId: created.id, evidenceId } });
       await tx.evidence.updateMany({ where: { id: { in: ids } }, data: { sealedAt: new Date() } });
+      if (locationIds.length)
+        await tx.locationEvent.updateMany({
+          where: { id: { in: locationIds }, ownerId: user.id },
+          data: { caseId: created.id },
+        });
+      if (input.position) {
+        const capturedAt = new Date(input.position.capturedAt);
+        if (capturedAt.getTime() > Date.now() + 60_000)
+          throw new ForbiddenException('Location timestamp cannot be in the future');
+        if (Date.now() - capturedAt.getTime() > 2 * 60_000)
+          throw new ForbiddenException('Location reading is older than two minutes');
+        await tx.locationEvent.create({
+          data: {
+            ownerId: user.id,
+            caseId: created.id,
+            latitude: input.position.latitude,
+            longitude: input.position.longitude,
+            accuracy: input.position.accuracy,
+            capturedAt,
+          },
+        });
+      }
       await tx.caseEvent.create({
         data: {
           caseId: created.id,

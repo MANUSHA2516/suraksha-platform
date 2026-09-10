@@ -15,6 +15,11 @@ import {
   Input,
   PinPad,
   Trust,
+  TrustBadges,
+  ShieldMark,
+  Stepper,
+  SegmentedControl,
+  PasswordStrength,
   colors,
   s,
 } from '../components/ui';
@@ -154,8 +159,8 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
   if (id === 'M01')
     return (
       <Page title={t('')} tag="">
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <Text style={s.hero}>{t('\u2662')}</Text>
+        <View style={{ flex: 1, justifyContent: 'center', paddingTop: 40 }}>
+          <ShieldMark size={88} />
           <Text style={s.title}>
             {t('WELCOME TO')}
             {'\n'}
@@ -171,28 +176,25 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={t('Suraksha')}
         tag="SECURE LOGIN"
+        meta="SAFETY NETWORK"
         subtitle={t('GUARDIAN NETWORK \u00B7 MEMBER PORTAL')}
       >
-        <Dots total={5} step={3} />
-        <View style={s.row}>
-          <Button
-            title={t('Log In')}
-            tone={!register ? 'green' : 'outline'}
-            onPress={() => setRegister(false)}
-          />
-          <Button
-            title={t('Register')}
-            tone={register ? 'green' : 'outline'}
-            onPress={() => setRegister(true)}
-          />
-        </View>
+        <ShieldMark size={56} />
+        <Stepper step={3} total={5} label={t('Secure access')} />
+        <SegmentedControl
+          options={[t('Log In'), t('Register')]}
+          value={register ? t('Register') : t('Log In')}
+          onChange={(v) => setRegister(v === t('Register'))}
+        />
         <Input
           label={t('NIC NUMBER')}
+          icon="▣"
           value={form.login}
           onChange={(login) => setForm({ ...form, login })}
         />
         <Input
           label={t('PHONE NUMBER')}
+          icon="☎"
           value={form.phone}
           onChange={(phone) => setForm({ ...form, phone })}
           keyboardType="phone-pad"
@@ -200,9 +202,11 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
         {!register && (
           <Input
             label={t('PASSWORD')}
+            icon="▢"
             value={form.password}
             onChange={(password) => setForm({ ...form, password })}
             secure
+            revealable
           />
         )}
         <Button
@@ -223,12 +227,13 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
             session.setLocked(true);
           }}
         />
-        <Button
-          title={t('Register with your NIC in one step')}
-          tone="outline"
-          onPress={() => setRegister(true)}
-        />
-        <Trust />
+        <Pressable onPress={() => setRegister(true)}>
+          <Text style={s.link}>
+            {t('New here?')} <Text style={{ color: colors.blue }}>{t('Register with your NIC')}</Text>{' '}
+            {t('in one step.')}
+          </Text>
+        </Pressable>
+        <TrustBadges />
       </Page>
     );
   if (id === 'M03')
@@ -236,17 +241,19 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={t('Choose your language')}
         tag="QUICK SETUP"
+        meta="LANGUAGE"
         subtitle={t('SINHALA \u00B7 TAMIL \u00B7 ENGLISH')}
       >
-        <Dots total={4} />
+        <Stepper step={1} total={4} label={t('Language')} />
+        <Text style={[s.hero, { fontSize: 48 }]}>○</Text>
         {[
-          ['si', 'Sinhala · සිංහල'],
-          ['ta', 'Tamil · தமிழ்'],
-          ['en', 'English'],
-        ].map(([code, label]) => (
+          ['si', 'Sinhala · සිංහල', 'SI'],
+          ['ta', 'Tamil · தமிழ்', 'TA'],
+          ['en', 'English', 'EN'],
+        ].map(([code, label, badge]) => (
           <Choice
             key={code}
-            label={label!}
+            label={`${badge}  ${label}`}
             selected={locale === code}
             onPress={() => setLocale(code!)}
           />
@@ -256,6 +263,7 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
             {t('Verified translations are not supplied. English content will be shown.')}
           </Text>
         )}
+        <Text style={s.muted}>{t('You can change this anytime in Settings.')}</Text>
         <Button
           title={t('Continue \u276F')}
           onPress={async () => {
@@ -266,7 +274,7 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
             } else n.navigate('M04', { locale });
           }}
         />
-        <Trust />
+        <TrustBadges />
       </Page>
     );
   if (['M04', 'M05', 'M06'].includes(id)) {
@@ -277,19 +285,22 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
       'Always someone watching over you.',
     ];
     const descriptions = [
-      'A deliberate SOS trigger records your location and alerts your support network when a delivery provider is connected.',
-      'Store screenshots, audio and location securely, hidden from casual access on your phone.',
-      'Verified staff work together across reporting, legal guidance and counseling. This prototype does not provide a live 24/7 response network.',
+      'One deliberate action shares your live location with trusted contacts and the nearest verified responder when delivery is connected.',
+      'Screenshots, audio and location stay encrypted and hidden from other people using the same phone.',
+      'Verified responders and support staff stay ready across reporting, legal guidance and counseling.',
     ];
     return (
-      <Page title={t('')} tag="ONBOARDING">
+      <Page title={t('')} tag="ONBOARDING" meta={`STEP ${index + 1} OF 3`}>
         <Pressable onPress={() => n.navigate('M07', route.params)}>
           <Text style={[s.link, { textAlign: 'right' }]}>{t('Skip')}</Text>
         </Pressable>
-        <Text style={s.hero}>{['♢', '♙', '◎'][index]}</Text>
+        <ShieldMark size={64} />
         <Text style={s.title}>{titles[index]}</Text>
         <Text style={s.subtitle}>{descriptions[index]}</Text>
         <Dots step={index + 1} />
+        <Text style={[s.muted, { textAlign: 'center' }]}>
+          {t('Research prototype · development delivery services')}
+        </Text>
         <Button
           title={id === 'M06' ? 'Get started ❯' : 'Next ❯'}
           onPress={() =>
@@ -301,34 +312,44 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
   }
   if (id === 'M07')
     return (
-      <Page title={t('Create your account')} tag="SECURE SIGNUP" subtitle={t('ACCOUNT SETUP')}>
-        <Dots total={5} step={3} />
+      <Page
+        title={t('Create your account')}
+        tag="SECURE SIGNUP"
+        meta="ACCOUNT"
+        subtitle={t('TAKES LESS THAN A MINUTE')}
+      >
+        <Stepper step={3} total={5} label={t('Account setup')} />
         <Input
           label={t('FULL NAME')}
+          icon="♙"
           value={form.name}
           onChange={(name) => setForm({ ...form, name })}
         />
         <Input
           label={t('MOBILE NUMBER')}
+          icon="☎"
           value={form.phone}
           onChange={(phone) => setForm({ ...form, phone })}
           keyboardType="phone-pad"
         />
         <Input
           label={t('PASSWORD')}
+          icon="▢"
           value={form.password}
           onChange={(password) => setForm({ ...form, password })}
           secure
+          revealable
         />
+        <PasswordStrength value={form.password} />
         <Text style={s.muted}>{t('Use 8+ characters with a number & symbol.')}</Text>
         <Choice
-          label={t('I agree to the prototype privacy notice and confirm I am 16 or older.')}
+          label={t('I agree to the Terms and Privacy Policy and confirm I am 16 or older.')}
           selected={consent}
           onPress={() => setConsent(!consent)}
         />
         <Text style={s.muted}>
           {t(
-            'Data is stored for your chosen safety and support workflows. This is a research prototype. Full reviewed Terms and Privacy Policy are not yet supplied; do not enter real sensitive data in this development deployment.',
+            'Reviewed Terms and Privacy Policy text is not yet supplied for this research prototype. Do not enter real sensitive data in development.',
           )}
         </Text>
         <Button
@@ -352,7 +373,7 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
           tone="outline"
           onPress={() => n.navigate('M02')}
         />
-        <Trust />
+        <TrustBadges />
       </Page>
     );
   if (id === 'M08')
@@ -360,8 +381,10 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={t('Secure your app')}
         tag="APP LOCK"
+        meta="PIN SETUP"
         subtitle={t('Set a 6-digit PIN. You can also enable fingerprint unlock.')}
       >
+        <Stepper step={4} total={5} label={t('App lock')} />
         {session.user?.hasPin && (
           <Input
             label={t('Current PIN')}
@@ -400,7 +423,7 @@ export function OnboardingScreen({ navigation: n, route }: ScreenProps) {
             n.navigate('M09');
           }}
         />
-        <Trust />
+        <TrustBadges />
       </Page>
     );
   if (id === 'M09')

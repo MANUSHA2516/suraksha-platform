@@ -1,10 +1,39 @@
 import { t } from '@suraksha/shared';
-import React, { useState } from 'react';
-import { Text, View, Image } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
+import React, { useState, useEffect } from 'react';
+import { Text, View, Image, Pressable } from 'react-native';
+import { deviceMedia, type EvidenceFile } from '../providers/media';
+import { AudioCapture, EvidenceMediaPreview } from '../components/evidence-media';
+import { File, Paths } from 'expo-file-system';
+import { randomUUID } from 'expo-crypto';
 import { api, useData, evidenceBytes } from '../lib/api';
 import { ScreenProps } from '../lib/context';
-import { Page, Card, Button, Choice, Input, State, Trust, s } from '../components/ui';
+import {
+  Page,
+  Card,
+  Button,
+  Input,
+  State,
+  Trust,
+  TrustBadges,
+  PinPad,
+  relativeTime,
+  colors,
+  s,
+} from '../components/ui';
+
+function evidenceTag(kind: string) {
+  if (kind === 'Photo') return 'Threat';
+  if (kind === 'Chat log') return 'Chat';
+  return kind;
+}
+
+const captureTypes: [string, string][] = [
+  ['Photo', '▣'],
+  ['Audio', '◎'],
+  ['Video', '▶'],
+  ['Chat log', '▤'],
+];
+
 export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
   const id = route.name;
   const vault = useData<any[]>(id === 'M18' ? '/evidence' : null);
@@ -14,12 +43,28 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
   );
   const [kind, setKind] = useState('Photo');
   const [note, setNote] = useState('');
-  const [file, setFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [file, setFile] = useState<EvidenceFile | null>(null);
   const [text, setText] = useState('');
   const [pin, setPin] = useState('');
   const [preview, setPreview] = useState('');
   const [imagePreview, setImagePreview] = useState('');
+  const [mediaPreview, setMediaPreview] = useState<Uint8Array | null>(null);
+  const [chatText, setChatText] = useState('');
   const [scan, setScan] = useState<any>(null);
+  useEffect(
+    () => () => {
+      if (file?.uri.startsWith(Paths.cache.uri)) {
+        try {
+          const cached = new File(file.uri);
+          if (cached.exists) cached.delete();
+        } catch {
+          /* The OS may already have evicted its cache copy. */
+        }
+      }
+    },
+    [file],
+  );
+
   if (id === 'M18')
     return (
       <Page
@@ -41,9 +86,9 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
               <Text style={{ fontSize: 24 }}>{t('\u25A2')}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={s.text}>{e.filename}</Text>
-                <Text style={s.muted}>{new Date(e.createdAt).toLocaleString()}</Text>
+                <Text style={s.muted}>{relativeTime(e.createdAt)}</Text>
               </View>
-              <Text style={s.badge}>{e.kind}</Text>
+              <Text style={s.badge}>{evidenceTag(e.kind)}</Text>
             </View>
           </Card>
         ))}
@@ -58,27 +103,62 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         tag="ADD EVIDENCE"
         subtitle={t('Choose a type to capture or import')}
       >
-        {['Photo', 'Audio', 'Video', 'Chat log'].map((x) => (
-          <Choice key={x} label={x} selected={kind === x} onPress={() => setKind(x)} />
-        ))}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
+          {captureTypes.map(([label, icon]) => {
+            const selected = kind === label;
+            return (
+              <Pressable
+                key={label}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                onPress={() => {
+                  setFile(null);
+                  setKind(label);
+                }}
+                style={[
+                  s.card,
+                  {
+                    width: '47%',
+                    alignItems: 'center',
+                    paddingVertical: 22,
+                    marginBottom: 0,
+                  },
+                  selected && { backgroundColor: '#e8faf2', borderColor: colors.green },
+                ]}
+              >
+                <Text style={{ fontSize: 28, marginBottom: 8, color: colors.navy }}>{icon}</Text>
+                <Text style={s.text}>{label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
         <Button
           title={file ? file.name : 'Choose file to import'}
           tone="outline"
           onPress={async () => {
-            const result = await DocumentPicker.getDocumentAsync({
-              type:
-                kind === 'Photo'
-                  ? 'image/*'
-                  : kind === 'Audio'
-                    ? 'audio/*'
-                    : kind === 'Video'
-                      ? 'video/*'
-                      : '*/*',
-              copyToCacheDirectory: true,
-            });
-            if (!result.canceled) setFile(result.assets[0] || null);
+            const result = await deviceMedia.import(kind);
+            if (result) setFile(result);
           }}
         />
+        {(kind === 'Photo' || kind === 'Video') && (
+          <Button
+            title={kind === 'Photo' ? t('Take photo') : t('Record video')}
+            tone="outline"
+            onPress={async () => {
+              const result = await deviceMedia.capture(kind);
+              if (result) setFile(result);
+            }}
+          />
+        )}
+        {kind === 'Audio' && <AudioCapture onCaptured={setFile} />}
+        {kind === 'Chat log' && (
+          <Input
+            label={t('Paste chat text (or import a file)')}
+            value={chatText}
+            onChange={setChatText}
+            multiline
+          />
+        )}
         <Input
           label={t('Note (optional) \u2014 what happened, when, where\u2026')}
           value={note}
@@ -88,17 +168,32 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         <Button
           title={t('Encrypt & save')}
           onPress={async () => {
-            if (!file) throw new Error('Choose a file first');
+            let selected = file;
+            let temporary: File | null = null;
+            if (kind === 'Chat log' && chatText.trim()) {
+              temporary = new File(Paths.cache, `captured-${randomUUID()}.txt`);
+              temporary.write(chatText);
+              selected = { uri: temporary.uri, name: 'Chat-log.txt', mimeType: 'text/plain' };
+            }
+            if (!selected) throw new Error('Choose or capture evidence first');
+            if (selected.size && selected.size > 25 * 1024 * 1024)
+              throw new Error('Choose a file smaller than 25 MB');
             const data = new FormData();
             data.append('file', {
-              uri: file.uri,
-              name: file.name,
-              type: file.mimeType || 'application/octet-stream',
+              uri: selected.uri,
+              name: selected.name,
+              type: selected.mimeType || 'application/octet-stream',
             } as unknown as Blob);
             data.append('kind', kind);
             data.append('note', note);
-            const item = await api('/evidence', 'POST', data);
-            n.replace('M20', { id: item.id });
+            try {
+              const item = await api('/evidence', 'POST', data);
+              setChatText('');
+              setFile(null);
+              n.replace('M20', { id: item.id });
+            } finally {
+              if (temporary?.exists) temporary.delete();
+            }
           }}
         />
         <Trust text="AES-256-GCM ENCRYPTION AT REST" />
@@ -114,27 +209,24 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         <State query={detail} />
         <Card>
           <Text style={[s.text, { textAlign: 'center' }]}>{t('\u2659 Encrypted preview')}</Text>
-          <Input
-            label={t('Unlock with 6-digit PIN')}
-            value={pin}
-            onChange={setPin}
-            secure
-            keyboardType="numeric"
-          />
+          <PinPad label={t('Unlock with 6-digit PIN')} value={pin} onChange={setPin} />
           <Button
             title={t('Verify & unlock preview')}
             tone="outline"
             onPress={async () => {
+              if (!detail.data?.mediaType) throw new Error('Evidence details are still loading');
               const result = await api(`/evidence/${route.params.id}/unlock`, 'POST', { pin });
               const bytes = await evidenceBytes(route.params.id, result.proof);
-              if (detail.data.mediaType.startsWith('image/') && bytes.length <= 5 * 1024 * 1024) {
+              const mediaType = detail.data.mediaType;
+              if (mediaType.startsWith('image/') && bytes.length <= 5 * 1024 * 1024) {
                 const base64 = btoa(Array.from(bytes, (b) => String.fromCharCode(b)).join(''));
-                setImagePreview('data:' + detail.data.mediaType + ';base64,' + base64);
+                setImagePreview('data:' + mediaType + ';base64,' + base64);
               }
+              setMediaPreview(/^(audio|video)\//.test(mediaType) ? bytes : null);
               setPreview(
-                detail.data.mediaType.startsWith('text/')
+                mediaType.startsWith('text/')
                   ? new TextDecoder().decode(bytes)
-                  : `Integrity verified. ${bytes.length} decrypted bytes. Binary display is not enabled in this prototype viewer.`,
+                  : `Integrity verified. ${bytes.length} decrypted bytes. Use the media preview when this file format is supported by your device.`,
               );
               setPin('');
             }}
@@ -146,6 +238,9 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
               style={{ height: 300, width: '100%' }}
               resizeMode="contain"
             />
+          )}
+          {mediaPreview && detail.data?.mediaType && (
+            <EvidenceMediaPreview bytes={mediaPreview} mediaType={detail.data.mediaType} />
           )}
           {preview && <Text style={s.text}>{preview}</Text>}
         </Card>
@@ -171,7 +266,7 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
           tone="outline"
           onPress={() => n.navigate('M24', { evidenceIds: [route.params.id] })}
         />
-        <Trust />
+        <TrustBadges items={['ENCRYPTED', 'TAMPER-EVIDENT']} />
       </Page>
     );
   if (id === 'M21')

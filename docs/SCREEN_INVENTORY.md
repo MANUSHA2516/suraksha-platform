@@ -382,7 +382,7 @@ Routes/components/endpoints are IMPLEMENTATION DECISIONS. Mobile uses named Reac
 - Related entities: Evidence, AuditLog.
 - Frontend component: `apps/mobile/src/features/evidence.tsx`.
 - Automated evidence: `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts`. Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control.
-- Implementation status: **PARTIALLY IMPLEMENTED**. Four evidence formats can be imported or a text note entered; in-app camera/microphone recording remains (G19).
+- Implementation status: **IMPLEMENTED**. Native capture/import and private media playback exist; `apps/mobile/test/media.test.tsx` checks permissions and cache cleanup. Physical-device/codec validation remains G21; OCR remains G19.
 
 ## M20 — Evidence Detail — Sealed Record (Screenshot_0231)
 
@@ -402,7 +402,7 @@ Routes/components/endpoints are IMPLEMENTATION DECISIONS. Mobile uses named Reac
 - Related entities: Evidence, EvidenceAccess.
 - Frontend component: `apps/mobile/src/features/evidence.tsx`.
 - Automated evidence: `apps/mobile/test/flows.test.tsx`, `tests/integration.test.ts`, `tests/providers.test.ts`. Mobile screen rendering; report submission and early SOS release have interaction assertions. Linked API tests cover aggregate workflows, not every screen control.
-- Implementation status: **PARTIALLY IMPLEMENTED**. PIN-gated verified metadata, text/image preview and attachment work; audio/video playback remains (G19).
+- Implementation status: **IMPLEMENTED**. Native capture/import and private media playback exist; `apps/mobile/test/media.test.tsx` checks permissions and cache cleanup. Physical-device/codec validation remains G21; OCR remains G19.
 
 ## M21 — Scan a Message
 
@@ -836,7 +836,7 @@ Routes/components/endpoints are IMPLEMENTATION DECISIONS. Mobile uses named Reac
 - Related entities: Case, CaseEvent, CaseEvidence, LocationEvent, EvidenceAccess.
 - Frontend component: `apps/web/src/features/cases.tsx`.
 - Automated evidence: `tests/integration.test.ts`, `tests/e2e/staff.spec.ts`. API policy/workflow coverage; Playwright covers case assignment/status and cross-workspace denial. No individual visual regression assertion for this screen.
-- Implementation status: **PARTIALLY IMPLEMENTED**. Assigned case, evidence, messaging and actions work; case-specific location trail has no ingestion/linkage yet (G20).
+- Implementation status: **IMPLEMENTED**. Assigned case, evidence, messaging, actions and consented report location trail work; SOS-only trails remain SOS-scoped unless linked at filing.
 
 ## S11 — Update Case Status
 

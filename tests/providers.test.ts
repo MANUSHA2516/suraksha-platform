@@ -40,6 +40,7 @@ describe.skipIf(!enabled)('Real MinIO and FastAPI integration', () => {
     if (userId) {
       for (const e of await db.evidence.findMany({ where: { ownerId: userId } }))
         await app.get(ObjectStore).remove(e.objectKey);
+      await db.case.deleteMany({ where: { ownerId: userId } });
       await db.aIAnalysis.deleteMany({ where: { ownerId: userId } });
       await db.evidence.deleteMany({ where: { ownerId: userId } });
       await db.user.delete({ where: { id: userId } });
@@ -80,5 +81,29 @@ describe.skipIf(!enabled)('Real MinIO and FastAPI integration', () => {
         .decrypt(await app.get(ObjectStore).get(evidence.objectKey))
         .toString(),
     ).toBe('Synthetic blackmail test message');
+    const report = await request(app.getHttpServer())
+      .post('/v1/reports')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        category: 'CYBER_HARASSMENT',
+        occurredAt: new Date().toISOString(),
+        anonymous: true,
+        evidenceIds: [evidence.id],
+        idempotencyKey: randomUUID(),
+      });
+    expect(report.status).toBe(201);
+    expect(report.body.analysis).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: result.body.id,
+          confidence: null,
+          modelVersion: result.body.modelVersion,
+        }),
+      ]),
+    );
+    const read = await request(app.getHttpServer())
+      .get('/v1/cases/' + report.body.reference)
+      .set('Authorization', 'Bearer ' + token);
+    expect(read.body.analysis[0].id).toBe(result.body.id);
   });
 });

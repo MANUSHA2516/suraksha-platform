@@ -167,12 +167,24 @@ describe('Cross-role case and evidence integration', () => {
       description: 'Synthetic integration report',
       anonymous: true,
       evidenceIds: [evidenceId],
+      position: {
+        latitude: 6.9271,
+        longitude: 79.8612,
+        accuracy: 12,
+        capturedAt: new Date().toISOString(),
+      },
       idempotencyKey: randomUUID(),
     };
     const result = await post('/reports', input);
     expect(result.status).toBe(201);
     reference = result.body.reference;
     expect(reference).toMatch(/^SL-\d+$/);
+    expect(result.body.locations).toHaveLength(1);
+    expect(result.body.locations[0]).toMatchObject({
+      latitude: 6.9271,
+      longitude: 79.8612,
+      source: 'REPORT',
+    });
     expect((await post('/reports', input)).body.reference).toBe(reference);
     expect((await get('/cases/' + reference, 'ADMIN')).body.reporter).toBe('Anonymous');
   });

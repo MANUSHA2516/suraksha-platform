@@ -13,21 +13,49 @@ import {
   Badge,
   Field,
   Action,
+  MapPanel,
 } from '../components/ui';
 import { readable } from '@suraksha/shared';
 import type { CaseView } from '@suraksha/types';
+function isToday(iso: string) {
+  return new Date(iso).toDateString() === new Date().toDateString();
+}
+
+function matchesAdminTab(r: CaseView, tab: string) {
+  if (tab === 'All reports') return true;
+  if (tab === 'New') return r.triage === 'NEW' || (r.stage === 'FILED' && !r.officer);
+  if (tab === 'In review') return r.triage === 'IN_REVIEW';
+  if (tab === 'Escalated') return r.escalated;
+  if (tab === 'Unassigned') return !r.officer;
+  if (tab === 'Resolved') return r.stage === 'RESOLVED';
+  return true;
+}
+
 export function CaseList({ role }: { role: 'ADMIN' | 'POLICE' }) {
   const q = useData<CaseView[]>('/cases');
+  const adminTabs = ['All reports', 'New', 'In review', 'Escalated', 'Unassigned', 'Resolved'];
+  const policeTabs = [
+    'All reports',
+    'Filed',
+    'Under investigation',
+    'Escalated',
+    'Unassigned',
+    'Resolved',
+  ];
   const [tab, setTab] = useState('All reports');
   const [search, setSearch] = useState('');
   const rows = (q.data || []).filter(
     (r) =>
-      (tab === 'All reports' ||
-        (tab === 'Unassigned' && !r.officer) ||
-        (tab === 'Escalated' && r.escalated) ||
-        readable(r.stage) === tab) &&
+      (role === 'ADMIN'
+        ? matchesAdminTab(r, tab)
+        : tab === 'All reports' ||
+          (tab === 'Unassigned' && !r.officer) ||
+          (tab === 'Escalated' && r.escalated) ||
+          readable(r.stage) === tab) &&
       `${r.reference} ${r.category}`.toLowerCase().includes(search.toLowerCase()),
   );
+  const resolvedToday =
+    q.data?.filter((r) => r.stage === 'RESOLVED' && isToday(r.createdAt)).length || 0;
   return (
     <>
       <Title title={role === 'ADMIN' ? 'Reports Queue' : 'Assigned Cases'}>
@@ -43,19 +71,17 @@ export function CaseList({ role }: { role: 'ADMIN' | 'POLICE' }) {
           ['Open reports', q.data?.filter((r) => r.stage !== 'RESOLVED').length || 0],
           ['High priority', q.data?.filter((r) => r.priority === 'HIGH').length || 0],
           ['Escalated', q.data?.filter((r) => r.escalated).length || 0],
-          ['Resolved', q.data?.filter((r) => r.stage === 'RESOLVED').length || 0],
+          [
+            role === 'ADMIN' ? 'Resolved today' : 'Resolved',
+            role === 'ADMIN'
+              ? resolvedToday
+              : q.data?.filter((r) => r.stage === 'RESOLVED').length || 0,
+          ],
         ]}
       />
       <Card>
         <Tabs
-          options={[
-            'All reports',
-            'Filed',
-            'Under investigation',
-            'Escalated',
-            'Unassigned',
-            'Resolved',
-          ]}
+          options={role === 'ADMIN' ? adminTabs : policeTabs}
           value={tab}
           onChange={setTab}
         />
@@ -114,11 +140,30 @@ export function CaseDetail({ reference, role }: { reference: string; role: 'ADMI
           </Card>
           {role === 'POLICE' && (
             <Card title={t('Location trail')}>
-              <p>
-                {t(
-                  'No location trail is attached to this case. Only explicitly shared incident locations may be shown.',
-                )}
-              </p>
+              {c.locations?.length ? (
+                <>
+                  <MapPanel positions={c.locations} />
+                  <ol className="timeline">
+                    {c.locations.map((p) => (
+                      <li key={p.id}>
+                        <strong>
+                          {p.latitude.toFixed(5)}, {p.longitude.toFixed(5)}
+                        </strong>
+                        <small>
+                          {p.source} · ±{Math.round(p.accuracy)}m ·{' '}
+                          {new Date(p.capturedAt).toLocaleString()}
+                        </small>
+                      </li>
+                    ))}
+                  </ol>
+                </>
+              ) : (
+                <p>
+                  {t(
+                    'No location trail is attached to this case. Only explicitly shared incident locations may be shown.',
+                  )}
+                </p>
+              )}
             </Card>
           )}
           <Card title={t('Report narrative')}>
@@ -235,6 +280,9 @@ export function CaseStatus({ reference }: { reference: string }) {
   const q = useData<CaseView>('/cases/' + reference);
   const [stage, setStage] = useState('');
   const [notes, setNotes] = useState('');
+  const stages = ['FILED', 'UNDER_INVESTIGATION', 'SUSPECT_CONTACTED', 'RESOLVED'] as const;
+  const current = stage || q.data?.stage || 'FILED';
+  const currentIndex = stages.indexOf(current as (typeof stages)[number]);
   return (
     <div className="narrow">
       <a href={'/police/cases/' + reference}>
@@ -244,20 +292,26 @@ export function CaseStatus({ reference }: { reference: string }) {
       <Title title={t('Update status')} subtitle={'Investigation progress · Case #' + reference} />
       <Card title={t('Select current stage')}>
         <State {...q} retry={q.reload} />
-        {['FILED', 'UNDER_INVESTIGATION', 'SUSPECT_CONTACTED', 'RESOLVED'].map((x) => (
-          <label className="stage" key={x}>
-            <input
-              type="radio"
-              name="stage"
-              checked={stage === x || (!stage && q.data?.stage === x)}
-              onChange={() => setStage(x)}
-            />
-            <span>
-              {readable(x)}
-              {q.data?.stage === x && <small>{t('Current stage')}</small>}
-            </span>
-          </label>
-        ))}
+        <div className="stage-stepper" role="radiogroup" aria-label={t('Investigation stage')}>
+          {stages.map((x, i) => (
+            <button
+              key={x}
+              type="button"
+              className={
+                'stage-step' +
+                (current === x ? ' active' : '') +
+                (i < currentIndex ? ' done' : '')
+              }
+              onClick={() => setStage(x)}
+            >
+              <span className="stage-index">{i + 1}</span>
+              <span>
+                {readable(x)}
+                {q.data?.stage === x && <small>{t('Current stage')}</small>}
+              </span>
+            </button>
+          ))}
+        </div>
         <Field label={t('Investigation notes')}>
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={5} />
         </Field>
@@ -269,7 +323,7 @@ export function CaseStatus({ reference }: { reference: string }) {
             label={t('Save update')}
             onClick={async () => {
               await api(`/cases/${reference}/status`, 'PATCH', {
-                stage,
+                stage: current,
                 notes,
                 expectedVersion: q.data?.version,
               });

@@ -56,6 +56,14 @@ export type CaseView = {
   }[];
   evidence?: EvidenceView[];
   analysis?: unknown[];
+  locations?: {
+    id: string;
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+    capturedAt: string;
+    source: 'SOS' | 'SHARE' | 'REPORT';
+  }[];
 };
 export type EvidenceView = {
   id: string;

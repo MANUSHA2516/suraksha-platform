@@ -33,6 +33,15 @@ export const reportSchema = z
     description: z.string().max(10000).default(''),
     anonymous: z.boolean(),
     evidenceIds: z.array(z.string().uuid()).max(20).default([]),
+    locationEventIds: z.array(z.string().uuid()).max(50).default([]),
+    position: z
+      .object({
+        latitude: z.number().min(-90).max(90),
+        longitude: z.number().min(-180).max(180),
+        accuracy: z.number().nonnegative().max(100000),
+        capturedAt: z.string().datetime(),
+      })
+      .optional(),
     idempotencyKey: z.string().uuid(),
   })
   .strict();

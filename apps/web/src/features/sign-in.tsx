@@ -6,6 +6,54 @@ import { ShieldCheck } from 'lucide-react';
 import { SafeUser } from '@suraksha/types';
 import { api } from '../lib/api';
 import { Field } from '../components/ui';
+
+const portal = {
+  admin: {
+    headline: 'Protecting staff & communities, together',
+    welcome: 'Welcome back',
+    idLabel: 'Staff ID',
+    sso: 'Government SSO',
+    trust: [
+      'Verified staff accounts only',
+      'Role-restricted admin access',
+      'Audited evidence and case actions',
+    ],
+  },
+  police: {
+    headline: 'Respond faster. Protect more.',
+    welcome: 'Officer sign in',
+    idLabel: 'Badge ID',
+    sso: 'Police ID SSO',
+    trust: [
+      'Verified police staff accounts',
+      'Role-restricted case and SOS access',
+      'Audited evidence handling',
+    ],
+  },
+  counselor: {
+    headline: 'Listen closely. Help fully.',
+    welcome: 'Counselor sign in',
+    idLabel: 'Practitioner ID',
+    sso: 'Health Ministry ID SSO',
+    trust: [
+      'Verified counselor accounts',
+      'Role-restricted client session access',
+      'Audited care notes and messages',
+    ],
+  },
+  legal: {
+    headline: 'Accessible guidance. Human support.',
+    welcome: 'Legal advisor sign in',
+    idLabel: 'Advisor ID',
+    sso: 'Legal Bar SSO',
+    trust: [
+      'Verified legal advisor accounts',
+      'Role-restricted query access',
+      'Audited published guidance actions',
+    ],
+  },
+} as const;
+
 export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: SafeUser) => void }) {
   const role = path.startsWith('/police')
     ? 'police'
@@ -14,14 +62,10 @@ export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: Saf
       : path.startsWith('/legal')
         ? 'legal'
         : 'admin';
-  const words = {
-    admin: ['Protecting staff & communities, together', 'Welcome back', 'Staff ID'],
-    police: ['Respond faster. Protect more.', 'Officer sign in', 'Badge ID'],
-    counselor: ['Listen closely. Help fully.', 'Counselor sign in', 'Practitioner ID'],
-    legal: ['Accessible guidance. Human support.', 'Legal advisor sign in', 'Advisor ID'],
-  }[role];
+  const copy = portal[role];
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [rememberDevice, setRememberDevice] = useState(false);
@@ -35,12 +79,12 @@ export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: Saf
         </a>
         <div>
           <small>{t('GUARDIAN ACCESS PORTAL')}</small>
-          <h1>{words[0]}</h1>
+          <h1>{copy.headline}</h1>
           <p>{t('Restricted access for the Suraksha response and support network.')}</p>
           <ul>
-            <li>{t('Verified staff accounts')}</li>
-            <li>{t('Role-restricted case access')}</li>
-            <li>{t('Audited evidence handling')}</li>
+            {copy.trust.map((item) => (
+              <li key={item}>{t(item)}</li>
+            ))}
           </ul>
         </div>
         <small>{t('Research prototype \u00B7 development services')}</small>
@@ -71,9 +115,9 @@ export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: Saf
             {role.toUpperCase()}
             {t('PORTAL')}
           </small>
-          <h1>{words[1]}</h1>
+          <h1>{copy.welcome}</h1>
           <p>{t('Sign in with your verified staff credentials.')}</p>
-          <Field label={words[2] || 'Staff ID'}>
+          <Field label={copy.idLabel}>
             <input
               required
               autoComplete="username"
@@ -82,25 +126,36 @@ export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: Saf
             />
           </Field>
           <Field label={t('Password')}>
-            <input
-              required
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="password-field">
+              <input
+                required
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="text-link password-toggle"
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                {showPassword ? t('Hide') : t('Show')}
+              </button>
+            </div>
           </Field>
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={rememberDevice}
-              onChange={(e) => setRememberDevice(e.target.checked)}
-            />
-            {t('Remember this device')}
-          </label>
-          <button type="button" className="text-link" onClick={() => setRecovery(!recovery)}>
-            {t('Forgot access code?')}
-          </button>
+          <div className="login-row">
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={rememberDevice}
+                onChange={(e) => setRememberDevice(e.target.checked)}
+              />
+              {t('Remember this device')}
+            </label>
+            <button type="button" className="text-link" onClick={() => setRecovery(!recovery)}>
+              {t('Forgot access code?')}
+            </button>
+          </div>
           {recovery && (
             <p role="status">
               {t(
@@ -121,7 +176,7 @@ export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: Saf
           </button>
           <div className="divider">{t('alternate access')}</div>
           <button type="button" className="secondary full" disabled>
-            {t('Government SSO \u2014 not connected')}
+            {t(copy.sso + ' \u2014 not connected')}
           </button>
           <div className="trust-row">{t('\u25C8 Private access \u25C8 Audited actions')}</div>
         </form>

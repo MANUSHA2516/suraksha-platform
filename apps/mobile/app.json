@@ -24,7 +24,22 @@
           "locationWhenInUsePermission": "Share your location only when you choose to use safety features."
         }
       ],
-      "./plugins/with-disguise.cjs"
+      "./plugins/with-disguise.cjs",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Import evidence you choose to preserve.",
+          "cameraPermission": "Capture evidence only when you choose.",
+          "microphonePermission": "Record evidence only when you choose."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Record an audio account only when you choose."
+        }
+      ],
+      "expo-video"
     ]
   }
 }

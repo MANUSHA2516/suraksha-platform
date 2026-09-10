@@ -4,6 +4,18 @@ import { t } from '@suraksha/shared';
 import { useState } from 'react';
 import { api, useData } from '../lib/api';
 import { Title, Card, Metrics, State, Field, Action, Badge, Tabs } from '../components/ui';
+
+function weekAgo() {
+  return Date.now() - 7 * 86400000;
+}
+
+function completedThisWeek(sessions: any[]) {
+  const start = weekAgo();
+  return sessions.filter(
+    (x) => x.status === 'COMPLETED' && Date.parse(x.startsAt) >= start,
+  ).length;
+}
+
 export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: boolean }) {
   const q = useData<any[]>('/counseling/appointments');
   const [selected, setSelected] = useState('');
@@ -11,6 +23,8 @@ export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: b
   const messages = useData<any[]>(selected ? `/counseling/sessions/${selected}/messages` : null);
   const today = new Date().toDateString();
   const sessions = q.data || [];
+  const doneThisWeek = completedThisWeek(sessions);
+  const progressMax = Math.max(doneThisWeek, sessions.length || 1);
   return (
     <>
       <Title
@@ -24,10 +38,19 @@ export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: b
             sessions.filter((x) => new Date(x.startsAt).toDateString() === today).length,
           ],
           ['Active clients', new Set(sessions.map((x) => x.clientAlias)).size],
-          ['Completed', sessions.filter((x) => x.status === 'COMPLETED').length],
-          ['Live video', 'Not connected'],
+          ['Unread messages', 'Unavailable'],
+          ['Completed this week', doneThisWeek],
         ]}
       />
+      {!messagesOnly && (
+        <Card title={t('Weekly progress')}>
+          <progress value={doneThisWeek} max={progressMax} />
+          <p>
+            {doneThisWeek} of {progressMax} sessions
+          </p>
+          <p className="muted">{t('Target not configured')}</p>
+        </Card>
+      )}
       <div className="two-col">
         <Card title={messagesOnly ? 'Choose a client session' : 'Today’s Sessions'}>
           <State {...q} retry={q.reload} empty={!sessions.length} />
@@ -81,6 +104,52 @@ export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: b
     </>
   );
 }
+
+export function ClientList() {
+  const q = useData<any[]>('/counseling/appointments');
+  const sessions = q.data || [];
+  const clients = [
+    ...sessions
+      .reduce((map, a) => {
+        if (!map.has(a.clientAlias)) map.set(a.clientAlias, a);
+        return map;
+      }, new Map<string, any>())
+      .values(),
+  ];
+  return (
+    <>
+      <Title title={t('Clients')} subtitle={t('Counseling care \u00B7 confidential workspace')} />
+      <Metrics
+        items={[
+          ['Active clients', clients.length],
+          ['Sessions on record', sessions.length],
+          ['Completed this week', completedThisWeek(sessions)],
+          ['Unread messages', 'Unavailable'],
+        ]}
+      />
+      <Card title={t('Client list')}>
+        <State {...q} retry={q.reload} empty={!clients.length} />
+        {clients.map((a) => (
+          <div className="queue-row" key={a.clientAlias}>
+            <div>
+              <a href={'/counselor/clients/' + a.id}>{a.clientAlias}</a>
+              <small>
+                {new Date(a.startsAt).toLocaleString()}
+                {t('\u00B7')}
+                {a.modality}
+              </small>
+              <Badge>{a.concern}</Badge>
+            </div>
+            <a className="button secondary" href={'/counselor/clients/' + a.id}>
+              {t('View')}
+            </a>
+          </div>
+        ))}
+      </Card>
+    </>
+  );
+}
+
 export function ClientSnapshot({ id }: { id: string }) {
   const q = useData('/counseling/clients/' + id);
   if (!q.data) return <State {...q} retry={q.reload} />;
@@ -164,6 +233,7 @@ export function ClientSnapshot({ id }: { id: string }) {
     </>
   );
 }
+
 export function SessionNotes({ id }: { id: string }) {
   const q = useData('/counseling/clients/' + id);
   const slots = useData<any[]>('/counselors/availability');

@@ -45,7 +45,7 @@ services/ai/       Python / FastAPI / versioned analyzer interface
 packages/          types, validation, shared i18n, config
 scripts/           environment setup, database commands and source extraction
 infrastructure     docker-compose.yml at the repository root
- docs/             source analysis, implementation audit and limitations
+docs/             source analysis, implementation audit and limitations
 ```
 
 PostgreSQL stores relational data and metadata. MinIO stores encrypted binary objects. Redis is provisioned for future distributed workers; current realtime uses PostgreSQL outbox records and scoped SSE. English UI catalogs exist with explicit English fallback for Sinhala/Tamil until verified translations are available.
@@ -167,7 +167,7 @@ Ordinary Vitest tests need PostgreSQL and valid root `.env`. Provider tests addi
 
 Passwords/PINs use Argon2. Access tokens are short-lived; refresh sessions rotate and support revocation/replay detection. Web refresh cookies are HttpOnly; mobile refresh credentials use SecureStore. Server authorization checks roles, assignment and ownership. Evidence uses AES-256-GCM with random nonces and SHA-256 integrity checks, private storage and authorized audited downloads. This is server-managed encryption at rest, **not end-to-end encryption or security certification**. Production KMS/rotation, deployment hardening, backup retention and recovery policies remain work.
 
-The development SOS provider records local events and contacts **no real emergency service or trusted-contact phone**. Routes are illustrative, not validated safe navigation. AI is explicitly non-validated and supplies no measured accuracy. Legal content and a validated clinical screener are missing from the source set. OCR, in-app media capture/playback, production notifications, background location, native disguise validation, full verified translations and comprehensive visual/device tests remain partial. The exact status of every documented screen and cross-cutting requirement is in the audit; nothing is marked complete merely because it compiles.
+The development SOS provider records local events and contacts **no real emergency service or trusted-contact phone**. Routes are illustrative, not validated safe navigation. AI is explicitly non-validated and supplies no measured accuracy. Legal content and a validated clinical screener are missing from the source set. OCR, production notifications, background location, native disguise validation, full verified translations and comprehensive visual/device tests remain partial. The exact status of every documented screen and cross-cutting requirement is in the audit; nothing is marked complete merely because it compiles.
 
 ## Documentation
 

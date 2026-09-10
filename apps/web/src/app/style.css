@@ -477,6 +477,53 @@ dd {
   align-items: center;
   padding: 17px 0;
 }
+.stage-stepper {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 20px;
+}
+.stage-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: #f7fafc;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.stage-step.active {
+  border-color: var(--green);
+  background: #e8faf2;
+}
+.stage-step.done {
+  border-color: #b7e7d3;
+}
+.stage-index {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+.stage-step.active .stage-index {
+  background: var(--green);
+}
+.stage-step small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.search {
+  max-width: 280px;
+}
 .message {
   padding: 15px;
   border-radius: 10px;
@@ -530,6 +577,49 @@ dd {
   background: linear-gradient(#0cb88288, #0cb88222);
   border-top: 2px solid #0cb882;
   border-radius: 6px 6px 0 0;
+}
+.chart.dual .chart-day {
+  width: 12%;
+  text-align: center;
+}
+.chart.dual .bars {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 4px;
+  height: 160px;
+}
+.chart.dual .bar {
+  width: 10px;
+  min-height: 2px;
+}
+.chart.dual .bar.reports {
+  background: linear-gradient(#0cb882aa, #0cb88233);
+  border-top-color: #0cb882;
+}
+.chart.dual .bar.sos {
+  background: linear-gradient(#1459c9aa, #1459c933);
+  border-top: 2px solid #1459c9;
+}
+.legend {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+.legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+.legend .dot.green {
+  background: var(--green);
+}
+.legend .dot.blue {
+  background: var(--blue);
 }
 .map {
   min-height: 320px;
@@ -761,4 +851,26 @@ progress {
   border: 0;
   font-size: 12px;
   font-weight: 400;
+}
+.login-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 18px;
+}
+.login-row .check {
+  margin: 0;
+}
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-field input {
+  padding-right: 64px;
+}
+.password-toggle {
+  position: absolute;
+  right: 12px;
 }

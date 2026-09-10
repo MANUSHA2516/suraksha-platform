@@ -6,7 +6,20 @@ import * as Location from 'expo-location';
 import * as Crypto from 'expo-crypto';
 import { api, useData } from '../lib/api';
 import { useSession, ScreenProps } from '../lib/context';
-import { Page, Card, Button, Input, MapCard, State, Trust, colors, s } from '../components/ui';
+import {
+  Page,
+  Card,
+  Button,
+  Input,
+  MapCard,
+  State,
+  Trust,
+  TrustBadges,
+  IconCard,
+  Stepper,
+  colors,
+  s,
+} from '../components/ui';
 export const currentPosition = () => deviceLocation.current();
 export function SafetyScreen({ navigation: n, route }: ScreenProps) {
   const id = route.name;
@@ -90,42 +103,50 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={'Good evening, ' + (session.user?.name.split(' ')[0] || 'you')}
         tag="HOME"
+        meta="DASHBOARD"
         subtitle={t('Here\u2019s your safety overview')}
         nav
         navigation={n}
       >
         <State query={home} />
-        {[
-          ['SOS Emergency', 'Tap and hold 2s to alert', 'M13', '△'],
-          ['Evidence Vault', `${home.data?.evidenceCount || 0} items`, 'M18', '▢'],
-          ['Ask Legal Aid', 'AI chat & human guidance', 'M23', '♧'],
-          ['Check in', 'Mood check', 'M29', '◎'],
-          ['Jobs', 'Opportunities entry', 'jobs', '▣'],
-        ].map(([label, detail, screen, icon]) => (
-          <Card
-            key={label}
-            onPress={() =>
-              screen === 'jobs'
-                ? setError(
-                    'Jobs and skills screens are not specified in the source. No employment service is available.',
-                  )
-                : n.navigate(screen)
-            }
-            style={screen === 'M13' ? { backgroundColor: colors.red, borderColor: colors.red } : {}}
-          >
-            <View style={s.row}>
-              <Text style={{ fontSize: 25, color: screen === 'M13' ? 'white' : colors.green }}>
-                {icon}
-              </Text>
-              <View>
-                <Text style={[s.text, screen === 'M13' && { color: 'white' }]}>{label}</Text>
-                <Text style={[s.muted, screen === 'M13' && { color: 'white' }]}>{detail}</Text>
-              </View>
-            </View>
-          </Card>
-        ))}
+        <Stepper step={3} total={5} />
+        <IconCard
+          title={t('SOS Emergency')}
+          detail={t('Tap and hold 2s to alert')}
+          icon="!"
+          tone="sos"
+          onPress={() => n.navigate('M13')}
+        />
+        <IconCard
+          title={t('Evidence Vault')}
+          detail={`${home.data?.evidenceCount || 0} items`}
+          icon="▢"
+          onPress={() => n.navigate('M18')}
+        />
+        <IconCard
+          title={t('Ask Legal Aid')}
+          detail={t('AI chat')}
+          icon="♧"
+          onPress={() => n.navigate('M23')}
+        />
+        <IconCard
+          title={t('Check in')}
+          detail={t('Mood screen')}
+          icon="◎"
+          onPress={() => n.navigate('M29')}
+        />
+        <IconCard
+          title={t('Jobs')}
+          detail={t('Entry only · catalog not specified')}
+          icon="▣"
+          onPress={() =>
+            setError(
+              'Jobs and skills screens are not specified in the source. No employment service is available.',
+            )
+          }
+        />
         {error && <Text style={s.muted}>{error}</Text>}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
           {[
             ['Scan a message', 'M21'],
             ['Start a report', 'M24'],
@@ -148,54 +169,80 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={t('SOS Emergency')}
         tag="EMERGENCY"
+        meta="HOLD-TO-ALERT"
         subtitle={t('Press and hold to send an alert')}
       >
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 330 }}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('Hold for two seconds to activate SOS')}
-            disabled={busy}
-            onPressIn={() => {
-              setHolding(true);
-              timer.current = setTimeout(async () => {
-                timer.current = null;
-                setBusy(true);
-                setHolding(false);
-                try {
-                  const location = await currentPosition();
-                  const result = await api('/sos', 'POST', {
-                    idempotencyKey: Crypto.randomUUID(),
-                    ...location,
-                  });
-                  n.replace('M14', { id: result.id });
-                } catch (e) {
-                  setError(e instanceof Error ? e.message : 'SOS could not be recorded');
-                } finally {
-                  setBusy(false);
-                }
-              }, 2000);
-            }}
-            onPressOut={() => {
-              if (timer.current) clearTimeout(timer.current);
-              timer.current = null;
-              setHolding(false);
-            }}
+          <View
             style={{
-              width: 190,
-              height: 190,
-              borderRadius: 95,
-              backgroundColor: colors.red,
-              borderWidth: 8,
-              borderColor: holding ? '#ffaaa4' : '#ffdfdc',
+              width: 230,
+              height: 230,
+              borderRadius: 115,
+              borderWidth: 2,
+              borderColor: '#ffc9c5',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 36, color: 'white' }}>{t('\u25B3')}</Text>
-            <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold' }}>
-              {busy ? 'RECORDING…' : holding ? 'KEEP HOLDING' : 'HOLD\n2 SEC'}
-            </Text>
-          </Pressable>
+            <View
+              style={{
+                width: 210,
+                height: 210,
+                borderRadius: 105,
+                borderWidth: 2,
+                borderColor: '#ffb0aa',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('Hold for two seconds to activate SOS')}
+                disabled={busy}
+                onPressIn={() => {
+                  setHolding(true);
+                  timer.current = setTimeout(async () => {
+                    timer.current = null;
+                    setBusy(true);
+                    setHolding(false);
+                    try {
+                      const location = await currentPosition();
+                      const result = await api('/sos', 'POST', {
+                        idempotencyKey: Crypto.randomUUID(),
+                        ...location,
+                      });
+                      n.replace('M14', { id: result.id });
+                    } catch (e) {
+                      setError(e instanceof Error ? e.message : 'SOS could not be recorded');
+                    } finally {
+                      setBusy(false);
+                    }
+                  }, 2000);
+                }}
+                onPressOut={() => {
+                  if (timer.current) clearTimeout(timer.current);
+                  timer.current = null;
+                  setHolding(false);
+                }}
+                style={{
+                  width: 190,
+                  height: 190,
+                  borderRadius: 95,
+                  backgroundColor: colors.red,
+                  borderWidth: 8,
+                  borderColor: holding ? '#ffaaa4' : '#ffdfdc',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: [{ scale: holding ? 0.96 : 1 }],
+                }}
+              >
+                <Text style={{ fontSize: 36, color: 'white' }}>{t('\u25B3')}</Text>
+                <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold' }}>
+                  {busy ? 'RECORDING…' : holding ? 'KEEP HOLDING' : 'HOLD\n2 SEC'}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
         </View>
         {error && (
           <Text accessibilityRole="alert" style={s.error}>
@@ -203,6 +250,9 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
           </Text>
         )}
         <Text style={s.subtitle}>
+          {t('Alerts trusted contacts and nearest police unit with your live location.')}
+        </Text>
+        <Text style={[s.muted, { textAlign: 'center' }]}>
           {t(
             'This prototype records a development alert. No real police unit or trusted contact is contacted.',
           )}
@@ -215,7 +265,7 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
             n.navigate('M12');
           }}
         />
-        <Trust text="LIVE LOCATION WHEN PERMITTED" />
+        <TrustBadges items={['LIVE LOCATION', 'ENCRYPTED']} />
       </Page>
     );
   if (id === 'M14')
@@ -223,7 +273,8 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={t('Help is on the way')}
         tag="LIVE ALERT"
-        subtitle={t('Development alert tracking')}
+        meta="TRACKING"
+        subtitle={t('Live tracking active')}
       >
         <State query={alert} />
         <MapCard
@@ -231,19 +282,26 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
           longitude={alert.data?.locations[0]?.longitude}
         />
         <Card>
-          <Text style={s.text}>
+          <Text style={s.text}>{t('Police unit notified')}</Text>
+          <Text style={s.muted}>
             {alert.data?.responderConfirmed
-              ? 'Development responder joined'
-              : 'Waiting for a development responder'}
+              ? t('Development responder joined')
+              : t('Waiting for a development responder · no live ETA')}
           </Text>
-          <Text style={s.muted}>{t('No real emergency dispatch has occurred.')}</Text>
         </Card>
-        {alert.data?.deliveries.map((d: any) => (
-          <Card key={d.id}>
-            <Text style={s.text}>{d.recipientLabel}</Text>
-            <Text style={s.muted}>{d.status.replaceAll('_', ' ')}</Text>
-          </Card>
-        ))}
+        <Card>
+          <Text style={s.text}>
+            {(alert.data?.deliveries?.length || 0) + ' ' + t('contacts alerted')}
+          </Text>
+          {(alert.data?.deliveries || []).map((d: any) => (
+            <Text key={d.id} style={s.muted}>
+              {d.recipientLabel} · {d.status.replaceAll('_', ' ')}
+            </Text>
+          ))}
+          {!alert.data?.deliveries?.length && (
+            <Text style={s.muted}>{t('No contact delivery receipts yet.')}</Text>
+          )}
+        </Card>
         <Text style={s.badge}>{alert.data?.status}</Text>
         <Button
           title={t('\u2713 I am safe now')}
@@ -253,6 +311,7 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
           }}
         />
         <Button title={t('Home')} tone="outline" onPress={() => n.navigate('M12')} />
+        <TrustBadges items={['LIVE LOCATION', 'ENCRYPTED']} />
       </Page>
     );
   if (id === 'M15')
@@ -260,12 +319,28 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
       <Page
         title={t('Add trusted contacts')}
         tag="TRUSTED CONTACTS"
+        meta="STEP 4 OF 4"
         subtitle={t('They\u2019re prioritized during SOS')}
       >
+        <Stepper step={4} total={4} label={t('Contacts')} />
         <State query={contacts} />
         {contacts.data?.map((c) => (
           <Card key={c.id}>
             <View style={s.row}>
+              <View
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: colors.navy,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ color: 'white', fontWeight: '700' }}>
+                  {c.name.charAt(0).toUpperCase()}
+                </Text>
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.text}>
                   {c.name}
@@ -277,17 +352,20 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
                   {c.phone}
                 </Text>
               </View>
-              <Button
-                title={t('Remove')}
-                tone="outline"
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('Remove')}
                 onPress={async () => {
                   await api('/contacts/' + c.id, 'DELETE');
                   await contacts.refetch();
                 }}
-              />
+              >
+                <Text style={{ color: colors.red, fontSize: 18 }}>×</Text>
+              </Pressable>
             </View>
           </Card>
         ))}
+        <Text style={s.muted}>{t('You can add more anytime in Settings.')}</Text>
         <Input
           label={t('Name')}
           value={form.name}
@@ -322,6 +400,7 @@ export function SafetyScreen({ navigation: n, route }: ScreenProps) {
           }}
         />
         <Button title={t('Finish setup \u276F')} onPress={() => n.navigate('M12')} />
+        <TrustBadges />
       </Page>
     );
   if (id === 'M16')

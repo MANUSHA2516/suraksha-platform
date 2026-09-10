@@ -40,5 +40,11 @@
     "@playwright/test": "^1.57.0",
     "@types/react": "~19.1.10",
     "dotenv": "^16.6.1"
+  },
+  "overrides": {
+    "multer": "^2.3.0",
+    "@expo/metro-config": {
+      "postcss": "^8.5.28"
+    }
   }
 }

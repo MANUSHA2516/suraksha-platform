@@ -1,5 +1,7 @@
 import { t, setLocale } from '@suraksha/shared';
 import React, { useEffect, useState } from 'react';
+import { isDeviceInteraction, setDeviceRelock } from './lib/device-interaction';
+import { File, Paths } from 'expo-file-system';
 import { AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,17 +27,31 @@ export default function App() {
     setLocale(user?.locale || 'en');
   }, [user?.locale]);
   useEffect(() => {
+    // Remove interrupted decrypted previews after a prior process termination.
+    try {
+      for (const item of Paths.cache.list())
+        if (item instanceof File && /^(preview-|captured-)/.test(item.name)) item.delete();
+    } catch {
+      /* An unavailable OS cache must not prevent sign-in. */
+    }
     restoreSession()
       .then(setUser)
       .catch(() => {})
       .finally(() => setReady(true));
+    setDeviceRelock(() => {
+      setLocked(true);
+      queryClient.clear();
+    });
     const listener = AppState.addEventListener('change', (state) => {
-      if (state !== 'active') {
+      if (state !== 'active' && !isDeviceInteraction()) {
         setLocked(true);
         queryClient.clear();
       }
     });
-    return () => listener.remove();
+    return () => {
+      listener.remove();
+      setDeviceRelock(() => {});
+    };
   }, []);
   return (
     <SafeAreaProvider>

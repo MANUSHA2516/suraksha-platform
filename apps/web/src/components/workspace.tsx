@@ -21,8 +21,13 @@ import { roleHome, Role, SafeUser } from '@suraksha/types';
 import { SignIn } from '../features/sign-in';
 import { AdminOverview, UserManagement, Moderation, ModelMonitoring } from '../features/admin';
 import { CaseList, CaseDetail, CaseStatus } from '../features/cases';
-import { PoliceLive } from '../features/police';
-import { CounselingDashboard, ClientSnapshot, SessionNotes } from '../features/counseling';
+import { PoliceLive, PoliceMap } from '../features/police';
+import {
+  CounselingDashboard,
+  ClientList,
+  ClientSnapshot,
+  SessionNotes,
+} from '../features/counseling';
 import { LegalDashboard, LegalResources } from '../features/legal';
 import { State, Title, Card, Action } from './ui';
 const nav: Record<string, [string, string, typeof Users][]> = {
@@ -149,9 +154,11 @@ export function Workspace({ path }: { path: string }) {
           <CaseDetail reference={ref} role="POLICE" />
         );
     else if (segments[1] === 'cases') content = <CaseList role="POLICE" />;
+    else if (segments[1] === 'map') content = <PoliceMap />;
     else content = <PoliceLive />;
   } else if (user.role === 'COUNSELOR') {
     if (segments[1] === 'clients' && ref) content = <ClientSnapshot id={ref} />;
+    else if (segments[1] === 'clients') content = <ClientList />;
     else if (segments[1] === 'sessions' && ref) content = <SessionNotes id={ref} />;
     else content = <CounselingDashboard messagesOnly={segments[1] === 'messages'} />;
   } else
@@ -195,7 +202,10 @@ export function Workspace({ path }: { path: string }) {
           <span className="avatar">{user.name.charAt(0)}</span>
           <div>
             <strong>{user.name}</strong>
-            <small>{t('Authorized workspace')}</small>
+            <small>
+              {user.role.replaceAll('_', ' ')}
+              {user.verified ? ' · Verified' : ' · Pending'}
+            </small>
           </div>
           <button
             className="icon-button"

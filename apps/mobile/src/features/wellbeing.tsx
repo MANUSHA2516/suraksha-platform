@@ -1,9 +1,9 @@
 import { t } from '@suraksha/shared';
 import React, { useState } from 'react';
-import { Text } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 import { api, useData } from '../lib/api';
 import { ScreenProps } from '../lib/context';
-import { Page, Card, Button, Choice, Input, State, s } from '../components/ui';
+import { Page, Card, Button, Choice, Input, State, TrustBadges, colors, s } from '../components/ui';
 export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
   const id = route.name;
   const [answer, setAnswer] = useState('Several days');
@@ -26,6 +26,20 @@ export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
         tag="WELLNESS CHECK"
         subtitle={t('A private, non-diagnostic check-in')}
       >
+        <Text style={[s.muted, { textAlign: 'center', marginBottom: 8 }]}>
+          {t('Question 1 of 1')}
+        </Text>
+        <View
+          style={{
+            height: 8,
+            backgroundColor: colors.line,
+            borderRadius: 4,
+            marginBottom: 18,
+            overflow: 'hidden',
+          }}
+        >
+          <View style={{ width: '100%', height: '100%', backgroundColor: colors.green }} />
+        </View>
         <Text style={s.muted}>
           {t('Documented prompt \u00B7 full screening instrument not configured')}
         </Text>
@@ -34,7 +48,7 @@ export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
           <Choice key={x} label={x} selected={answer === x} onPress={() => setAnswer(x)} />
         ))}
         <Button
-          title={t('Save check-in \u276F')}
+          title={t('Next >')}
           tone="blue"
           onPress={async () => {
             const item = await api('/wellbeing/check-ins', 'POST', { answer, shared: false });
@@ -46,6 +60,7 @@ export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
             'This is not a diagnosis. Your result remains private unless you choose to share it with your assigned counselor.',
           )}
         </Text>
+        <TrustBadges items={['PRIVATE RESULTS', '2 MIN TOTAL']} />
       </Page>
     );
   if (id === 'M30')
@@ -56,7 +71,7 @@ export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
         subtitle={t('Your private wellbeing record')}
       >
         <State query={result} />
-        <Card style={{ backgroundColor: '#fff5e1' }}>
+        <Card style={{ backgroundColor: '#faf6e9' }}>
           <Text style={s.section}>{t('Check-in saved')}</Text>
           <Text style={s.text}>{result.data?.answer}</Text>
           <Text style={s.muted}>{result.data?.notice}</Text>
@@ -72,15 +87,23 @@ export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
           }}
         />
         <Button title={t('Book a counselor')} onPress={() => n.navigate('M31')} />
+        <Pressable accessibilityRole="link" onPress={() => n.navigate('M29')}>
+          <Text style={s.link}>{t('Retake')}</Text>
+        </Pressable>
         <Text style={s.muted}>
           {t(
             'You can check in again in two weeks. There is no automatic diagnosis or clinical severity score.',
           )}
         </Text>
+        <TrustBadges items={['PRIVATE RESULTS', 'NOT SHARED']} />
       </Page>
     );
   return (
-    <Page title={t('Book a session')} tag="BOOK SESSION" subtitle={t('Choose a counselor & time')}>
+    <Page
+      title={t('Book a Counselling Session')}
+      tag="BOOK SESSION"
+      subtitle={t('Choose a counselor & time')}
+    >
       <State query={slots} />
       {slots.data?.map((x) => (
         <Choice
@@ -144,6 +167,7 @@ export function WellbeingScreen({ navigation: n, route }: ScreenProps) {
       <Text style={s.muted}>
         {t('Confidential \u00B7 Free of charge. Live video is not connected.')}
       </Text>
+      <TrustBadges items={['CONFIDENTIAL', 'FREE']} />
     </Page>
   );
 }

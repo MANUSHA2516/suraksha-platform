@@ -17,12 +17,36 @@ import {
 import { readable, percent } from '@suraksha/shared';
 export function AdminOverview() {
   const q = useData('/admin/overview');
+  const [search, setSearch] = useState('');
   if (!q.data) return <State {...q} retry={q.reload} />;
   const d = q.data;
-  const max = Math.max(1, ...d.days.map((x: any) => x.reports + x.sos));
+  const needle = search.trim().toLowerCase();
+  const events = d.events.filter(
+    (x: any) =>
+      !needle ||
+      readable(x.action).toLowerCase().includes(needle) ||
+      String(x.id).toLowerCase().includes(needle),
+  );
+  const incidents = d.incidents.filter(
+    (r: any) =>
+      !needle ||
+      r.reference.toLowerCase().includes(needle) ||
+      readable(r.category).toLowerCase().includes(needle) ||
+      (r.officer?.name || '').toLowerCase().includes(needle),
+  );
+  const maxReports = Math.max(1, ...d.days.map((x: any) => x.reports));
+  const maxSos = Math.max(1, ...d.days.map((x: any) => x.sos));
   return (
     <>
-      <Title title={t('Overview')} subtitle={t('Platform activity \u00B7 Suraksha Admin')} />
+      <Title title={t('Overview')} subtitle={t('Platform activity \u00B7 Suraksha Admin')}>
+        <input
+          className="search"
+          placeholder={t('Search staff, reports, IDs…')}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label={t('Search overview')}
+        />
+      </Title>
       <Metrics
         items={[
           ['Total active users', d.users],
@@ -34,37 +58,58 @@ export function AdminOverview() {
       <p className="muted">{d.provenance}</p>
       <div className="two-col">
         <Card title={t('Weekly Activity')}>
-          <div className="chart">
+          <div className="chart dual">
             {d.days.map((x: any) => (
-              <div key={x.date}>
-                <div
-                  className="bar"
-                  style={{ height: Math.max(2, ((x.reports + x.sos) / max) * 150) }}
-                  title={`${x.reports} reports / ${x.sos} SOS`}
-                />
+              <div key={x.date} className="chart-day">
+                <div className="bars">
+                  <div
+                    className="bar reports"
+                    style={{ height: Math.max(2, (x.reports / maxReports) * 150) }}
+                    title={`${x.reports} reports`}
+                  />
+                  <div
+                    className="bar sos"
+                    style={{ height: Math.max(2, (x.sos / maxSos) * 150) }}
+                    title={`${x.sos} SOS`}
+                  />
+                </div>
                 <small>{new Date(x.date).toLocaleDateString('en', { weekday: 'short' })}</small>
               </div>
             ))}
           </div>
-          <p>{t('Reports and SOS volume \u00B7 last seven days')}</p>
+          <p className="legend">
+            <span className="dot green" /> {t('Reports')}
+            <span className="dot blue" /> {t('SOS')}
+          </p>
         </Card>
         <Card title={t('Live Feed')}>
-          {d.events.map((x: any) => (
+          <Badge tone="red">LIVE</Badge>
+          {events.map((x: any) => (
             <div className="feed-item" key={x.id}>
               <i />
               {readable(x.action)}
               <small>{new Date(x.createdAt).toLocaleTimeString()}</small>
             </div>
           ))}
-          <State empty={!d.events.length} />
+          <State empty={!events.length} />
         </Card>
       </div>
       <Card title={t('Recent Incidents')}>
-        <CaseTable rows={d.incidents} prefix="/admin" />
+        <CaseTable rows={incidents} prefix="/admin" />
       </Card>
     </>
   );
 }
+function matchesUserTab(u: any, tab: string) {
+  if (tab === 'All users') return true;
+  if (tab === 'Women (Verified)') return u.role === 'USER' && u.verified;
+  if (tab === 'Police') return u.role === 'POLICE';
+  if (tab === 'Counselors') return u.role === 'COUNSELOR';
+  if (tab === 'Pending') return !u.verified;
+  if (tab === 'Legal advisors') return u.role === 'LEGAL_ADVISOR';
+  return true;
+}
+
 export function UserManagement() {
   const q = useData<any[]>('/admin/users');
   const [tab, setTab] = useState('All users');
@@ -76,9 +121,7 @@ export function UserManagement() {
     role: 'POLICE',
     jurisdiction: 'Colombo',
   });
-  const rows = (q.data || []).filter(
-    (u) => tab === 'All users' || (tab === 'Pending' && !u.verified) || u.role === tab,
-  );
+  const rows = (q.data || []).filter((u) => matchesUserTab(u, tab));
   return (
     <>
       <Title title={t('User Management')} subtitle={t('Accounts and professional verification')}>
@@ -128,7 +171,14 @@ export function UserManagement() {
       )}
       <Card>
         <Tabs
-          options={['All users', 'USER', 'POLICE', 'COUNSELOR', 'LEGAL_ADVISOR', 'Pending']}
+          options={[
+            'All users',
+            'Women (Verified)',
+            'Police',
+            'Counselors',
+            'Pending',
+            'Legal advisors',
+          ]}
           value={tab}
           onChange={setTab}
         />
