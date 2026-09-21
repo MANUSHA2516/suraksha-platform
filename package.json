@@ -45,6 +45,12 @@
     "multer": "^2.3.0",
     "@expo/metro-config": {
       "postcss": "^8.5.28"
-    }
+    },
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-test-renderer": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-screens": "~4.26.0",
+    "react-native-safe-area-context": "~5.7.0"
   }
 }
