@@ -1,14 +1,16 @@
 import { t } from '@suraksha/shared';
 import React, { useState, useEffect } from 'react';
-import { Text, View, Image, Pressable } from 'react-native';
+import { Text, View, Image, Pressable, Platform } from 'react-native';
 import { deviceMedia, type EvidenceFile } from '../providers/media';
 import { AudioCapture, EvidenceMediaPreview } from '../components/evidence-media';
 import { File, Paths } from 'expo-file-system';
-import { randomUUID } from 'expo-crypto';
+import { prepareEvidence } from '../lib/evidence-upload';
 import { api, useData, evidenceBytes } from '../lib/api';
 import { ScreenProps } from '../lib/context';
 import {
   Page,
+  Icon,
+  EmptyState,
   Card,
   Button,
   Input,
@@ -53,7 +55,7 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
   const [scan, setScan] = useState<any>(null);
   useEffect(
     () => () => {
-      if (file?.uri.startsWith(Paths.cache.uri)) {
+      if (Platform.OS !== 'web' && file?.uri.startsWith(Paths.cache.uri)) {
         try {
           const cached = new File(file.uri);
           if (cached.exists) cached.delete();
@@ -75,10 +77,12 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         navigation={n}
       >
         <State query={vault} />
-        {!vault.data?.length && !vault.isLoading && (
-          <Text style={s.muted}>
-            {t('Your vault is empty. Add evidence to preserve it securely.')}
-          </Text>
+        {!vault.data?.length && !vault.isLoading && !vault.error && (
+          <EmptyState
+            title="Your story, protected"
+            detail="Add a photo, recording or message. Your evidence stays in your private vault."
+            icon="lock"
+          />
         )}
         {vault.data?.map((e) => (
           <Card key={e.id} onPress={() => n.navigate('M20', { id: e.id })}>
@@ -104,13 +108,13 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         subtitle={t('Choose a type to capture or import')}
       >
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
-          {captureTypes.map(([label, icon]) => {
+          {captureTypes.map(([label]) => {
             const selected = kind === label;
             return (
               <Pressable
                 key={label}
                 accessibilityRole="radio"
-                accessibilityState={{ selected }}
+                accessibilityState={{ checked: selected }}
                 onPress={() => {
                   setFile(null);
                   setKind(label);
@@ -126,7 +130,20 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
                   selected && { backgroundColor: '#e8faf2', borderColor: colors.green },
                 ]}
               >
-                <Text style={{ fontSize: 28, marginBottom: 8, color: colors.navy }}>{icon}</Text>
+                <View style={{ marginBottom: 10 }}>
+                  <Icon
+                    name={
+                      label === 'Photo'
+                        ? 'image'
+                        : label === 'Audio'
+                          ? 'mic'
+                          : label === 'Video'
+                            ? 'video'
+                            : 'message'
+                    }
+                    size={28}
+                  />
+                </View>
                 <Text style={s.text}>{label}</Text>
               </Pressable>
             );
@@ -168,31 +185,14 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         <Button
           title={t('Encrypt & save')}
           onPress={async () => {
-            let selected = file;
-            let temporary: File | null = null;
-            if (kind === 'Chat log' && chatText.trim()) {
-              temporary = new File(Paths.cache, `captured-${randomUUID()}.txt`);
-              temporary.write(chatText);
-              selected = { uri: temporary.uri, name: 'Chat-log.txt', mimeType: 'text/plain' };
-            }
-            if (!selected) throw new Error('Choose or capture evidence first');
-            if (selected.size && selected.size > 25 * 1024 * 1024)
-              throw new Error('Choose a file smaller than 25 MB');
-            const data = new FormData();
-            data.append('file', {
-              uri: selected.uri,
-              name: selected.name,
-              type: selected.mimeType || 'application/octet-stream',
-            } as unknown as Blob);
-            data.append('kind', kind);
-            data.append('note', note);
+            const upload = await prepareEvidence(file, kind, chatText, note);
             try {
-              const item = await api('/evidence', 'POST', data);
+              const item = await api('/evidence', 'POST', upload.data);
               setChatText('');
               setFile(null);
               n.replace('M20', { id: item.id });
             } finally {
-              if (temporary?.exists) temporary.delete();
+              upload.cleanup();
             }
           }}
         />
@@ -212,6 +212,7 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
           <PinPad label={t('Unlock with 6-digit PIN')} value={pin} onChange={setPin} />
           <Button
             title={t('Verify & unlock preview')}
+            disabled={pin.length !== 6 || !detail.data}
             tone="outline"
             onPress={async () => {
               if (!detail.data?.mediaType) throw new Error('Evidence details are still loading');
@@ -285,6 +286,7 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         <Input label={t('Message text')} value={text} onChange={setText} multiline />
         <Button
           title={t('Analyse with AI')}
+          disabled={!text.trim()}
           tone="blue"
           onPress={async () => {
             const result = await api('/analysis', 'POST', { text, language: 'auto' });
@@ -345,13 +347,19 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
       <Button
         title={t('File a report')}
         tone="blue"
-        onPress={() => n.navigate('M24', { evidenceIds: [analysis.data?.evidenceId] })}
+        onPress={() =>
+          n.navigate('M24', {
+            evidenceIds: analysis.data?.evidenceId ? [analysis.data.evidenceId] : [],
+          })
+        }
       />
       <Text style={s.section}>{t('What happens next')}</Text>
       <Text style={s.text}>
-        {t('\u2713 Evidence encrypted')}
+        {analysis.data?.evidenceId ? 'Evidence encrypted' : 'Analysis saved privately'}
         {'\n'}
-        {t('\u2713 Available in your vault')}
+        {analysis.data?.evidenceId
+          ? 'Available in your vault'
+          : 'Attach evidence when you choose to report'}
         {'\n'}
         {t('\u2022 Legal Aid notified only when you choose human escalation')}
       </Text>
