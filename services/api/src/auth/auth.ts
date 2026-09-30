@@ -22,6 +22,7 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { loginSchema, registerSchema } from '@suraksha/validation';
 import type { Principal, Role } from '@suraksha/types';
 import { parse } from '../core/http';
+import { webOrigins } from '../core/env';
 import type { Request, Response } from 'express';
 import type { User, Prisma } from '@prisma/client';
 import { Throttle } from '@nestjs/throttler';
@@ -186,7 +187,8 @@ export class AuthGuard implements CanActivate {
     req.sessionId = principal.sessionId;
     if (req.cookies?.suraksha_access && !['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
       const origin = req.headers.origin;
-      if (origin !== process.env.WEB_ORIGIN) throw new ForbiddenException('Invalid request origin');
+      if (!webOrigins().includes(origin || ''))
+        throw new ForbiddenException('Invalid request origin');
     }
     const roles = this.reflector.getAllAndOverride<Role[]>('roles', [
       context.getHandler(),
@@ -202,7 +204,7 @@ export class AuthController {
   constructor(@Inject(AuthService) private auth: AuthService) {}
   private send(session: Awaited<ReturnType<AuthService['issue']>>, req: Request, res: Response) {
     if (req.headers['x-suraksha-client'] === 'web') {
-      if (req.headers.origin !== process.env.WEB_ORIGIN)
+      if (!webOrigins().includes(req.headers.origin || ''))
         throw new ForbiddenException('Invalid origin');
       const options = {
         httpOnly: true,
@@ -245,7 +247,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (req.cookies?.suraksha_refresh && req.headers.origin !== process.env.WEB_ORIGIN)
+    if (req.cookies?.suraksha_refresh && !webOrigins().includes(req.headers.origin || ''))
       throw new ForbiddenException();
     const token = req.cookies?.suraksha_refresh || body.refreshToken;
     if (typeof token !== 'string') throw new UnauthorizedException();

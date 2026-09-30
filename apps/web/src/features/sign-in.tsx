@@ -128,6 +128,7 @@ export function SignIn({ path, onSignedIn }: { path: string; onSignedIn: (u: Saf
           <Field label={t('Password')}>
             <div className="password-field">
               <input
+                aria-label={t('Password')}
                 required
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"

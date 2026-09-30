@@ -18,7 +18,14 @@ export class AdminController {
         where: { createdAt: { gte: new Date(new Date().setUTCHours(0, 0, 0, 0)) } },
       }),
       this.db.case.findMany({
-        select: { reference: true, category: true, stage: true, priority: true, createdAt: true },
+        select: {
+          reference: true,
+          category: true,
+          stage: true,
+          priority: true,
+          createdAt: true,
+          officer: { select: { name: true } },
+        },
         orderBy: { createdAt: 'desc' },
         take: 6,
       }),

@@ -3,6 +3,7 @@ import { t } from '@suraksha/shared';
 
 import { useState } from 'react';
 import { readable } from '@suraksha/shared';
+import { Activity, FileText, Clock3, ShieldCheck } from 'lucide-react';
 export function Badge({ children, tone = '' }: { children: React.ReactNode; tone?: string }) {
   return <span className={'badge ' + tone}>{children}</span>;
 }
@@ -42,11 +43,17 @@ export function Card({
   );
 }
 export function Metrics({ items }: { items: [string, string | number][] }) {
+  const icons = [Activity, FileText, Clock3, ShieldCheck];
   return (
     <div className="metrics">
       {items.map(([label, value], i) => (
         <div className="card metric" key={label}>
-          <span className={'metric-icon color-' + i}>{['◈', '▣', '◷', '✓'][i % 4]}</span>
+          <span className={'metric-icon color-' + i}>
+            {(() => {
+              const Icon = icons[i % icons.length]!;
+              return <Icon size={18} aria-hidden="true" />;
+            })()}
+          </span>
           <div>
             <strong>{value}</strong>
             <small>{label}</small>

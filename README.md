@@ -114,7 +114,7 @@ Expo Go supports ordinary UI development but does not include the custom Android
 | `DATABASE_URL`, `POSTGRES_PASSWORD` | PostgreSQL connection and local container credential |
 | `JWT_SECRET` | Access-token signing secret |
 | `EVIDENCE_KEY`, `IDENTITY_LOOKUP_KEY` | Independent 32-byte hex encryption and identity-lookup keys |
-| `API_PORT`, `WEB_ORIGIN` | API listener and exact permitted staff origin |
+| `API_PORT`, `WEB_ORIGIN` | API listener and comma-separated allowed staff web origins |
 | `NEXT_PUBLIC_API_URL`, `EXPO_PUBLIC_API_URL` | Public API addresses; these contain no secrets |
 | `AI_URL`, `AI_SERVICE_TOKEN` | Private service address and matching FastAPI credential |
 | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | Private S3-compatible storage |

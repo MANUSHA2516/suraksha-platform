@@ -28,7 +28,7 @@ export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: b
   return (
     <>
       <Title
-        title={messagesOnly ? 'Messages' : 'Today’s sessions'}
+        title={messagesOnly ? 'Messages' : 'Upcoming sessions'}
         subtitle={t('Counseling care \u00B7 confidential workspace')}
       />
       <Metrics
@@ -52,7 +52,7 @@ export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: b
         </Card>
       )}
       <div className="two-col">
-        <Card title={messagesOnly ? 'Choose a client session' : 'Today’s Sessions'}>
+        <Card title={messagesOnly ? 'Choose a client session' : 'Session schedule'}>
           <State {...q} retry={q.reload} empty={!sessions.length} />
           {sessions.map((a) => (
             <div className="queue-row" key={a.id}>
@@ -63,7 +63,12 @@ export function CounselingDashboard({ messagesOnly = false }: { messagesOnly?: b
                   {t('\u00B7')}
                   {a.modality}
                 </small>
-                <Badge>{a.concern}</Badge>
+                <div className="session-tags">
+                  <Badge>{a.concern}</Badge>
+                  <Badge tone={a.status === 'COMPLETED' ? '' : 'amber'}>
+                    {a.status.replaceAll('_', ' ')}
+                  </Badge>
+                </div>
               </div>
               <div className="actions">
                 <a className="button secondary" href={'/counselor/clients/' + a.id}>

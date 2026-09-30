@@ -7,6 +7,13 @@ async function login(page: any, path: string, id: string, label: string) {
   await page.getByLabel(label, { exact: true }).fill(id);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in →', exact: true }).click();
+  await expect
+    .poll(async () =>
+      (await page.context().cookies('http://localhost:4000')).some(
+        (cookie) => cookie.name === 'suraksha_access',
+      ),
+    )
+    .toBe(true);
 }
 test('shared case crosses mobile API contract, Admin browser, Police browser and user tracker API', async ({
   browser,
@@ -63,7 +70,49 @@ test('shared case crosses mobile API contract, Admin browser, Police browser and
 });
 test('staff workspace rejects a different role and shows accessible login', async ({ page }) => {
   await login(page, '/counselor/sign-in', 'CNS-0071', 'Practitioner ID');
-  await expect(page.getByRole('heading', { name: 'Today’s sessions', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Upcoming sessions', level: 1 })).toBeVisible();
   await page.goto('/admin/users', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: '403 — Workspace restricted' })).toBeVisible();
+});
+
+test('synthetic development records appear in all four staff workspaces', async ({ page }) => {
+  const workspaces = [
+    {
+      path: '/admin/sign-in',
+      login: 'SL-ADM-0192',
+      label: 'Staff ID',
+      heading: 'Overview',
+      record: /SL-2291/,
+    },
+    {
+      path: '/police/sign-in',
+      login: 'WP-CDU-0044',
+      label: 'Badge ID',
+      heading: 'Active Alerts',
+      record: /6\.9271/,
+    },
+    {
+      path: '/counselor/sign-in',
+      login: 'CNS-0071',
+      label: 'Practitioner ID',
+      heading: 'Upcoming sessions',
+      record: /Stress support/,
+    },
+    {
+      path: '/legal/sign-in',
+      login: 'LGL-0012',
+      label: 'Advisor ID',
+      heading: 'Legal queries',
+      record: /\[DEMO\] Workplace rights information/,
+    },
+  ];
+  for (const [index, workspace] of workspaces.entries()) {
+    if (index > 0) {
+      await page.getByRole('button', { name: 'Sign out' }).click();
+      await expect(page.getByRole('button', { name: 'Sign in →' })).toBeVisible();
+    }
+    await login(page, workspace.path, workspace.login, workspace.label);
+    await expect(page.getByRole('heading', { name: workspace.heading })).toBeVisible();
+    await expect(page.getByText(workspace.record)).toBeVisible();
+  }
 });
