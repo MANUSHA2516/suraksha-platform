@@ -280,9 +280,34 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         <Card>
           <Text style={s.text}>{t('Upload screenshot or paste text')}</Text>
           <Text style={s.muted}>
-            {t('Screenshot OCR is not connected. Paste the message text below to analyze it.')}
+            {
+              'Import a clear English screenshot, review the extracted text, then check the message.'
+            }
           </Text>
         </Card>
+        <Button
+          title="Import screenshot"
+          tone="outline"
+          onPress={async () => {
+            const image = await deviceMedia.import('Photo');
+            if (!image) return;
+            try {
+              const upload = await prepareEvidence(image, 'Photo', '', '');
+              try {
+                const result = await api('/analysis/ocr', 'POST', upload.data);
+                setText(result.text);
+                setScan(null);
+              } finally {
+                upload.cleanup();
+              }
+            } finally {
+              if (Platform.OS !== 'web' && image.uri.startsWith(Paths.cache.uri)) {
+                const cached = new File(image.uri);
+                if (cached.exists) cached.delete();
+              }
+            }
+          }}
+        />
         <Input label={t('Message text')} value={text} onChange={setText} multiline />
         <Button
           title={t('Analyse with AI')}
@@ -297,7 +322,7 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
           <Card>
             <Text style={s.text}>{scan.classification}</Text>
             <Text style={s.muted}>{scan.explanation}</Text>
-            <Text style={s.badge}>{t('Development model \u00B7 confidence unavailable')}</Text>
+            <Text style={s.badge}>{'Basic phrase check - review the context'}</Text>
             <Button
               title={t('View full analysis')}
               onPress={() => n.navigate('M22', { id: scan.id })}
@@ -313,6 +338,10 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
         <Trust text="DEVELOPMENT ANALYSIS · NON-VALIDATED" />
       </Page>
     );
+  const result = analysis.data;
+  const saved = !!result?.evidenceId;
+  const flagged = result?.classification === 'DEVELOPMENT_FLAG';
+  const report = () => n.navigate('M24', { evidenceIds: saved ? [result.evidenceId] : [] });
   return (
     <Page
       title={t('Analysis result')}
@@ -320,49 +349,141 @@ export function EvidenceScreen({ navigation: n, route }: ScreenProps) {
       subtitle={t('Based on your submitted message')}
     >
       <State query={analysis} />
-      <Card>
-        <Text style={s.text}>
-          {analysis.data?.riskLevel}
-          {t('\u00B7')}
-          {analysis.data?.classification}
-        </Text>
-        <Text style={s.muted}>{analysis.data?.explanation}</Text>
-        <Text style={s.muted}>
-          {t('Model:')}
-          {analysis.data?.modelVersion}
-        </Text>
-        <Text style={s.badge}>{analysis.data?.validationStatus}</Text>
-      </Card>
-      <View style={s.row}>
-        <Card style={{ flex: 1 }}>
-          <Text style={s.muted}>{t('Save to vault')}</Text>
-          <Text style={s.text}>{analysis.data?.evidenceId ? 'Saved ✓' : 'Not saved'}</Text>
-        </Card>
-        <Card style={{ flex: 1 }}>
-          <Text style={s.muted}>{t('File a report')}</Text>
-          <Text style={s.text}>{t('Your choice')}</Text>
-        </Card>
-      </View>
-      <Button title={t('Talk to Legal Chatbot')} onPress={() => n.navigate('M23')} />
-      <Button
-        title={t('File a report')}
-        tone="blue"
-        onPress={() =>
-          n.navigate('M24', {
-            evidenceIds: analysis.data?.evidenceId ? [analysis.data.evidenceId] : [],
-          })
-        }
-      />
-      <Text style={s.section}>{t('What happens next')}</Text>
-      <Text style={s.text}>
-        {analysis.data?.evidenceId ? 'Evidence encrypted' : 'Analysis saved privately'}
-        {'\n'}
-        {analysis.data?.evidenceId
-          ? 'Available in your vault'
-          : 'Attach evidence when you choose to report'}
-        {'\n'}
-        {t('\u2022 Legal Aid notified only when you choose human escalation')}
-      </Text>
+      {result && (
+        <>
+          <Card
+            style={{
+              backgroundColor: flagged ? '#fff0ef' : '#eef4fc',
+              borderColor: flagged ? '#ffdbd7' : '#dce6ee',
+              padding: 20,
+            }}
+          >
+            <View style={[s.row, { alignItems: 'center', gap: 16 }]}>
+              <View
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 32,
+                  borderWidth: 4,
+                  borderColor: flagged ? colors.red : colors.blue,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Icon
+                  name={flagged ? 'sos' : 'scan'}
+                  color={flagged ? colors.red : colors.blue}
+                  size={28}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={[s.text, { fontWeight: '700', color: flagged ? colors.red : colors.navy }]}
+                >
+                  {flagged ? 'Concerning wording found' : 'No matching phrase found'}
+                </Text>
+                <Text style={[s.muted, { marginTop: 5 }]}>
+                  {flagged
+                    ? 'Review this message and choose your next step.'
+                    : 'This does not confirm the message is safe.'}
+                </Text>
+              </View>
+            </View>
+            <Text style={[s.muted, { marginTop: 12, fontSize: 11 }]}>
+              Basic phrase check. No risk percentage is available.
+            </Text>
+          </Card>
+          <View style={[s.row, { gap: 12 }]}>
+            <Card
+              label="Open saved evidence"
+              onPress={saved ? () => n.navigate('M20', { id: result.evidenceId }) : undefined}
+              style={{ flex: 1 }}
+            >
+              <Text style={s.muted}>Save to vault</Text>
+              <View style={[s.row, { marginTop: 8, justifyContent: 'space-between' }]}>
+                <Text
+                  style={{
+                    fontSize: 21,
+                    fontWeight: '700',
+                    color: saved ? colors.green : colors.muted,
+                  }}
+                >
+                  {saved ? 'Saved' : 'Not saved'}
+                </Text>
+                {saved && <Icon name="check" color={colors.green} size={21} />}
+              </View>
+            </Card>
+            <Card label="File a report" onPress={report} style={{ flex: 1 }}>
+              <Text style={s.muted}>File a report</Text>
+              <View style={[s.row, { marginTop: 8, justifyContent: 'space-between' }]}>
+                <Text style={{ fontSize: 21, fontWeight: '700', color: colors.blue }}>
+                  Continue
+                </Text>
+                <Icon name="arrow" size={20} color={colors.blue} />
+              </View>
+            </Card>
+          </View>
+          <Button title={t('Talk to Legal Chatbot')} onPress={() => n.navigate('M23')} />
+          <Text
+            style={[
+              s.muted,
+              {
+                marginTop: 20,
+                marginBottom: 16,
+                fontSize: 11,
+                fontWeight: '700',
+                letterSpacing: 1,
+              },
+            ]}
+          >
+            WHAT HAPPENS NEXT
+          </Text>
+          {[
+            {
+              title: saved ? 'Evidence encrypted' : 'Analysis recorded',
+              detail: saved
+                ? 'Stored securely when analysis completed'
+                : 'Your message check is complete',
+              complete: true,
+            },
+            {
+              title: saved ? 'Available in your Vault' : 'Add evidence when ready',
+              detail: saved
+                ? 'Open the Saved card to view it with your PIN'
+                : 'Keep a copy before making a report',
+              complete: saved,
+            },
+            {
+              title: 'Legal Aid support',
+              detail: 'Request a human advisor in Legal Chat when you choose',
+              complete: false,
+            },
+          ].map((step, index) => (
+            <View key={step.title} style={{ flexDirection: 'row', gap: 12 }}>
+              <View style={{ width: 14, alignItems: 'center' }}>
+                <View
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginTop: 5,
+                    backgroundColor: step.complete ? colors.green : colors.line,
+                  }}
+                />
+                {index < 2 && (
+                  <View
+                    style={{ width: 2, flex: 1, minHeight: 34, backgroundColor: colors.line }}
+                  />
+                )}
+              </View>
+              <View style={{ flex: 1, paddingBottom: 18 }}>
+                <Text style={[s.text, { fontWeight: '600', fontSize: 14 }]}>{step.title}</Text>
+                <Text style={[s.muted, { fontSize: 12, marginTop: 3 }]}>{step.detail}</Text>
+              </View>
+            </View>
+          ))}
+        </>
+      )}
     </Page>
   );
 }

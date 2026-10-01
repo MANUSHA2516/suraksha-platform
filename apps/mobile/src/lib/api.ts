@@ -1,3 +1,4 @@
+import { isNativeUpload, nativeUpload } from './upload-transport';
 import * as SecureStore from './session-store';
 import { queryClient } from './query-client';
 import { useEffect } from 'react';
@@ -15,8 +16,22 @@ async function request(url: string, options: RequestInit = {}, timeout = 25000) 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   try {
+    if (isNativeUpload(options.body)) {
+      return await nativeUpload(
+        url,
+        options.body,
+        options.headers as Record<string, string>,
+        controller.signal,
+      );
+    }
     return await fetch(url, { ...options, signal: controller.signal });
-  } catch {
+  } catch (error) {
+    if (__DEV__)
+      console.warn(
+        'API request failed',
+        url,
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     if (controller.signal.aborted)
       throw new Error('The request timed out. Check your connection and try again.');
     throw new Error(
@@ -61,7 +76,7 @@ export async function api<T = any>(
   body?: unknown,
   retry = true,
 ): Promise<T> {
-  const form = body instanceof FormData;
+  const form = body instanceof FormData || isNativeUpload(body);
   const response = await request(
     base + path,
     {
@@ -70,7 +85,7 @@ export async function api<T = any>(
         ...(form ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: 'Bearer ' + token } : {}),
       },
-      ...(body === undefined ? {} : { body: form ? body : JSON.stringify(body) }),
+      ...(body === undefined ? {} : { body: form ? (body as BodyInit) : JSON.stringify(body) }),
     },
     form ? 60000 : 25000,
   );

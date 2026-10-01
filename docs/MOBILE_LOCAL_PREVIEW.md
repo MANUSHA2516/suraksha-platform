@@ -31,4 +31,8 @@ This workspace uses `EVIDENCE_PROVIDER=local` and `LOCAL_OBJECT_DIR=C:/Users/Use
 
 ## External/device limits
 
-Phone camera, microphone, biometrics, notifications and launcher disguise require physical-device testing. Browser checks do not verify those native integrations. External emergency/contact delivery, live video, screenshot OCR and live safe routing are not connected. Analysis uses the existing explicitly non-validated development model. The UI reports these limits rather than claiming real dispatch or validated safety predictions.
+Phone camera, microphone, biometrics, notifications and launcher disguise require physical-device testing. Browser checks do not verify those native integrations. External emergency/contact delivery, live video and live safe routing are not connected. Analysis uses the existing explicitly non-validated development model. The UI reports these limits rather than claiming real dispatch or validated safety predictions.
+
+## Screenshot import and native uploads
+
+Native evidence uploads use Expo FileSystem multipart tasks directly, with authorization, timeout cancellation and the existing encrypted API storage. Browser uploads retain FormData. In Scan a message, Import screenshot extracts text from English PNG/JPG images (maximum 10 MB); review/edit it before analysis. OCR runs locally with Tesseract; its English model downloads on first use and caches in the API working directory under .local/ocr. No screenshot is sent to an external OCR provider. Analysis remains a basic phrase check, not a calibrated risk probability.

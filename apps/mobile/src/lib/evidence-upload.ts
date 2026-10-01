@@ -24,14 +24,20 @@ export async function prepareEvidence(
     temporary?.delete();
     throw new Error('Choose a file smaller than 25 MB');
   }
-  const data = new FormData();
-  data.append('file', {
-    uri: selected.uri,
-    name: selected.name,
-    type: selected.mimeType || 'application/octet-stream',
-  } as unknown as Blob);
-  data.append('kind', kind);
-  data.append('note', note);
+  const source = temporary || new File(selected.uri);
+  if (!source.exists) {
+    throw new Error('The selected file is no longer available. Import it again.');
+  }
+  if (source.size > 25 * 1024 * 1024) {
+    temporary?.delete();
+    throw new Error('Choose a file smaller than 25 MB');
+  }
+  const data = {
+    nativeUpload: true as const,
+    uri: source.uri,
+    mimeType: selected.mimeType || source.type || 'application/octet-stream',
+    parameters: { kind, note, filename: selected.name },
+  };
   return {
     data,
     cleanup: () => {
