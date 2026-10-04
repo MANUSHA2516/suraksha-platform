@@ -36,7 +36,7 @@ const nav: Record<string, [string, string, typeof Users][]> = {
     ['Reports', '/admin/reports', FileText],
     ['Users', '/admin/users', Users],
     ['Moderation', '/admin/moderation', ShieldCheck],
-    ['Settings', '/admin/settings/models', Settings],
+    ['AI Model Monitoring', '/admin/settings/models', Settings],
   ],
   POLICE: [
     ['Live', '/police/live', Radio],
